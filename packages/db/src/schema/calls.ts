@@ -14,8 +14,11 @@ import { organization } from "@workspace/db/schema/auth"
 import { batchCallsTable } from "@workspace/db/schema/batch-calls"
 import { contactsTable } from "@workspace/db/schema/contacts"
 import type {
+  CallExtraction,
   CallTranscript,
   CallVariableValues,
+  ExtractionErrorCode,
+  ExtractionStatus,
 } from "@workspace/shared/api/calls/types"
 
 export const callsTable = pgTable(
@@ -65,6 +68,9 @@ export const callsTable = pgTable(
     livekitRoomName: text("livekit_room_name").notNull(),
     transcript: json().$type<CallTranscript | null>(),
     variables: json().$type<CallVariableValues | null>(),
+    extraction: json().$type<CallExtraction | null>(),
+    extractionStatus: text("extraction_status").$type<ExtractionStatus>(),
+    extractionError: text("extraction_error").$type<ExtractionErrorCode>(),
     createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
       .defaultNow()
       .notNull(),

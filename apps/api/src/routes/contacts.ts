@@ -107,6 +107,9 @@ contactRoutes.get("/:contactId", requireOrganization, async (c) => {
       },
       columns: {
         transcript: false,
+        extraction: false,
+        extractionStatus: false,
+        extractionError: false,
       },
       with: {
         agent: {

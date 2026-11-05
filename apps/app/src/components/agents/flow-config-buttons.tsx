@@ -1,5 +1,5 @@
 import { Panel } from "@xyflow/react"
-import { BracesIcon, PencilLineIcon } from "lucide-react"
+import { BracesIcon, ListChecksIcon, PencilLineIcon } from "lucide-react"
 
 import { Button } from "@workspace/ui/components/button"
 import { AddNodeButton } from "@/components/agents/add-node-button"
@@ -31,6 +31,16 @@ export function FlowConfigButtons() {
         >
           <BracesIcon />
           {t("components.agents.flow_config_buttons.variables")}
+        </Button>
+      </div>
+
+      <div>
+        <Button
+          variant="outline"
+          onClick={() => setSidePanel({ kind: "extraction" })}
+        >
+          <ListChecksIcon />
+          {t("components.agents.flow_config_buttons.post_call_extraction")}
         </Button>
       </div>
     </Panel>

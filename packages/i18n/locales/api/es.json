@@ -20,7 +20,8 @@
     "list_versions_failed": "No se pudieron cargar las versiones del agente",
     "version_not_found": "Versión del agente no encontrada",
     "load_version_config_failed": "No se pudo cargar la configuración de la versión del agente",
-    "publish_failed": "No se pudo publicar la versión del agente"
+    "publish_failed": "No se pudo publicar la versión del agente",
+    "extraction_test_failed": "La prueba de extracción no ha terminado. Comprueba que el worker está en marcha y vuelve a intentarlo"
   },
   "batch_calls": {
     "list_failed": "No se pudieron cargar las llamadas por lotes",
@@ -64,7 +65,11 @@
     "agent_not_found": "Agente no encontrado",
     "insufficient_credits": "Créditos insuficientes",
     "agent_version_not_found": "Versión del agente no encontrada",
-    "start_outbound_failed": "No se pudo iniciar la llamada saliente"
+    "start_outbound_failed": "No se pudo iniciar la llamada saliente",
+    "extraction_no_transcript": "Esta llamada no tiene transcripción",
+    "extraction_not_configured": "El agente de esta llamada no tiene campos de extracción",
+    "extraction_already_running": "Ya hay una extracción en curso para esta llamada",
+    "extraction_rerun_failed": "No se ha podido repetir la extracción"
   },
   "contacts": {
     "user_email_not_found": "No se encontró el correo del usuario",

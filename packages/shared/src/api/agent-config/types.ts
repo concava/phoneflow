@@ -8,6 +8,7 @@ import type {
   endCallToolSchema,
   expressionConditionSchema,
   expressionOperatorSchema,
+  extractionFieldSchema,
   extractVariableSchema,
   extractVariablesToolSchema,
   flowEdgeConditionSchema,
@@ -15,6 +16,7 @@ import type {
   flowNodeConfigSchema,
   flowNodeInstructionsSchema,
   ivrNavigationToolSchema,
+  postCallExtractionSchema,
   transferCallToolSchema,
   webhookToolSchema,
 } from "./schemas"
@@ -32,6 +34,8 @@ export type EndCallTool = z.infer<typeof endCallToolSchema>
 export type IvrNavigationTool = z.infer<typeof ivrNavigationToolSchema>
 export type ExtractVariable = z.infer<typeof extractVariableSchema>
 export type ExtractVariablesTool = z.infer<typeof extractVariablesToolSchema>
+export type ExtractionField = z.infer<typeof extractionFieldSchema>
+export type PostCallExtraction = z.infer<typeof postCallExtractionSchema>
 export type TransferCallTool = z.infer<typeof transferCallToolSchema>
 export type FlowNodeConfig = z.infer<typeof flowNodeConfigSchema>
 export type FlowConversationNode = Extract<

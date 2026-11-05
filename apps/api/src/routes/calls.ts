@@ -1,7 +1,12 @@
 import {
   type AnyRelationsFilter,
+  and,
   count,
   eq,
+  isNull,
+  lt,
+  ne,
+  or,
   relationsFilterToSQL,
 } from "drizzle-orm"
 import { Hono } from "hono"
@@ -12,6 +17,7 @@ import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
 import {
   callListQuerySchema,
   completeCallRequestSchema,
+  extractionResultSchema,
   startInboundCallRequestSchema,
   startOutboundCallRequestSchema,
   startWebCallRequestSchema,
@@ -21,12 +27,16 @@ import {
 import type {
   CallDetailResponse,
   CallDownloadResponse,
+  CallExtractionInputResponse,
   CallListResponse,
   CallSipConnection,
+  CallTranscript,
   CompleteCallResponse,
   EndCallResponse,
   JoinCallResponse,
+  ReportExtractionResultResponse,
   RequestCallDownloadResponse,
+  RerunExtractionResponse,
   StartCallResponse,
   TriggerOutboundCallResponse,
   UnansweredCallResponse,
@@ -52,6 +62,7 @@ import {
   startCallRecording,
   stopCallRecording,
 } from "@/lib/livekit"
+import { enqueueExtractCall } from "@/lib/post-call"
 import { emailsQueue } from "@/lib/queues"
 import { validator } from "@/lib/validator"
 
@@ -107,6 +118,55 @@ async function resolveAgentConfig(
     organizationId: agent.organizationId,
     agentVersionId: null,
     config: agent.config,
+  }
+}
+
+// Longer than a job's worst case (3 attempts of 60s plus backoff), so a rerun only
+// takes over a pending extraction whose job was lost.
+const EXTRACTION_STALE_MS = 15 * 60 * 1000
+
+async function startPostCallExtraction(call: {
+  id: string
+  agentId: string
+  agentVersionId: string | null
+  transcript: CallTranscript | null
+}) {
+  try {
+    const resolved = await resolveAgentConfig(call.agentId, call.agentVersionId)
+    const fields = resolved?.config.postCallExtraction?.fields
+
+    if (!resolved || !fields) {
+      return
+    }
+
+    if (!call.transcript?.length) {
+      await db
+        .update(callsTable)
+        .set({ extractionStatus: "skipped", extractionError: "no_transcript" })
+        .where(eq(callsTable.id, call.id))
+      return
+    }
+
+    await db
+      .update(callsTable)
+      .set({ extractionStatus: "pending", updatedAt: new Date() })
+      .where(eq(callsTable.id, call.id))
+
+    await enqueueExtractCall({
+      callId: call.id,
+      fields,
+      timezone: resolved.config.timezone,
+    })
+  } catch (error) {
+    console.error(
+      `[post-call] failed to enqueue extraction for call ${call.id}:`,
+      error instanceof Error ? error.message : error
+    )
+    await db
+      .update(callsTable)
+      .set({ extractionStatus: "failed", extractionError: "enqueue_failed" })
+      .where(eq(callsTable.id, call.id))
+      .catch(() => {})
   }
 }
 
@@ -502,6 +562,8 @@ callRoutes.post(
         await deductOrganizationCredits(call.organizationId, costs.total)
       }
 
+      await startPostCallExtraction(updated)
+
       return c.json({
         id: updated.id,
         durationMs,
@@ -689,6 +751,171 @@ callRoutes.post("/:callId/end", requireOrganization, async (c) => {
   }
 })
 
+callRoutes.get("/:callId/extraction/input", requireAuthToken, async (c) => {
+  try {
+    const call = await db.query.callsTable.findFirst({
+      where: {
+        id: c.req.param("callId"),
+      },
+      columns: {
+        transcript: true,
+        startedAt: true,
+      },
+    })
+
+    if (!call) {
+      return c.json({ error: "Call not found" }, 404)
+    }
+
+    return c.json({
+      transcript: call.transcript ?? [],
+      startedAt: call.startedAt,
+    } satisfies CallExtractionInputResponse)
+  } catch {
+    return c.json({ error: "Failed to load extraction input" }, 500)
+  }
+})
+
+callRoutes.post(
+  "/:callId/extraction/result",
+  requireAuthToken,
+  validator("json", extractionResultSchema),
+  async (c) => {
+    try {
+      const payload = c.req.valid("json")
+
+      // Only a pending call accepts a result, so a late job cannot overwrite a finished one.
+      await db
+        .update(callsTable)
+        .set({
+          extraction:
+            payload.status === "completed" ? payload.extraction : null,
+          extractionStatus: payload.status,
+          extractionError:
+            payload.status === "completed" ? null : payload.error,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(callsTable.id, c.req.param("callId")),
+            eq(callsTable.extractionStatus, "pending")
+          )
+        )
+
+      return c.json({ ok: true } satisfies ReportExtractionResultResponse)
+    } catch {
+      return c.json({ error: "Failed to save extraction result" }, 500)
+    }
+  }
+)
+
+callRoutes.post(
+  "/:callId/extraction/rerun",
+  requireOrganization,
+  requirePermission({ calls: ["create"] }),
+  async (c) => {
+    const locale = c.get("locale")
+    const organizationId = c.get("organizationId")
+    const callId = c.req.param("callId")
+
+    try {
+      const call = await db.query.callsTable.findFirst({
+        where: {
+          id: callId,
+          organizationId,
+        },
+        columns: {
+          agentId: true,
+          agentVersionId: true,
+          transcript: true,
+        },
+      })
+
+      if (!call) {
+        return c.json({ error: t(locale, "calls.not_found") }, 404)
+      }
+
+      if (!call.transcript?.length) {
+        return c.json(
+          { error: t(locale, "calls.extraction_no_transcript") },
+          400
+        )
+      }
+
+      const resolved = await resolveAgentConfig(
+        call.agentId,
+        call.agentVersionId
+      )
+      const fields = resolved?.config.postCallExtraction?.fields
+
+      if (!resolved || !fields) {
+        return c.json(
+          { error: t(locale, "calls.extraction_not_configured") },
+          400
+        )
+      }
+
+      const [claimed] = await db
+        .update(callsTable)
+        .set({
+          extraction: null,
+          extractionStatus: "pending",
+          extractionError: null,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(callsTable.id, callId),
+            eq(callsTable.organizationId, organizationId),
+            or(
+              isNull(callsTable.extractionStatus),
+              ne(callsTable.extractionStatus, "pending"),
+              lt(
+                callsTable.updatedAt,
+                new Date(Date.now() - EXTRACTION_STALE_MS)
+              )
+            )
+          )
+        )
+        .returning({ id: callsTable.id })
+
+      if (!claimed) {
+        return c.json(
+          { error: t(locale, "calls.extraction_already_running") },
+          409
+        )
+      }
+
+      try {
+        await enqueueExtractCall({
+          callId,
+          fields,
+          timezone: resolved.config.timezone,
+        })
+      } catch {
+        await db
+          .update(callsTable)
+          .set({
+            extractionStatus: "failed",
+            extractionError: "enqueue_failed",
+          })
+          .where(eq(callsTable.id, callId))
+        return c.json(
+          { error: t(locale, "calls.extraction_rerun_failed") },
+          500
+        )
+      }
+
+      return c.json(
+        { extractionStatus: "pending" } satisfies RerunExtractionResponse,
+        202
+      )
+    } catch {
+      return c.json({ error: t(locale, "calls.extraction_rerun_failed") }, 500)
+    }
+  }
+)
+
 callRoutes.get("/:callId", requireOrganization, async (c) => {
   const locale = c.get("locale")
   const organizationId = c.get("organizationId")
@@ -835,6 +1062,9 @@ callRoutes.get(
         where,
         columns: {
           transcript: false,
+          extraction: false,
+          extractionStatus: false,
+          extractionError: false,
         },
         with: {
           agent: {

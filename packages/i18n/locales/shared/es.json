@@ -164,6 +164,26 @@
         "variables": {
           "unknown": "Variable desconocida \"{{variable}}\""
         }
+      },
+      "post_call_extraction": {
+        "fields": {
+          "min": "Añade al menos un campo",
+          "max": "Puedes añadir hasta 30 campos"
+        },
+        "key": {
+          "required": "La clave del campo es obligatoria",
+          "format": "La clave del campo debe empezar por una letra minúscula y contener solo letras minúsculas, números o guiones bajos",
+          "duplicate": "Clave de campo duplicada"
+        },
+        "description": {
+          "required": "La descripción del campo es obligatoria"
+        },
+        "options": {
+          "required": "Añade al menos una opción",
+          "empty": "Las opciones no pueden estar vacías",
+          "duplicate": "Las opciones no pueden repetirse",
+          "only_enum": "Solo los campos de tipo lista pueden tener opciones"
+        }
       }
     },
     "billing": {

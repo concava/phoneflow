@@ -431,6 +431,85 @@ export const flowEdgeConfigSchema = z.object({
   }),
 })
 
+const extractionFieldKeySchema = requiredString(
+  "schemas.agent_config.post_call_extraction.key.required"
+).regex(
+  /^[a-z][a-z0-9_]*$/,
+  "schemas.agent_config.post_call_extraction.key.format"
+)
+
+export const extractionFieldSchema = z
+  .object({
+    key: extractionFieldKeySchema,
+    type: z.enum(["string", "number", "boolean", "enum"]),
+    description: requiredString(
+      "schemas.agent_config.post_call_extraction.description.required"
+    ),
+    nullable: z.boolean(),
+    options: z
+      .array(
+        requiredString(
+          "schemas.agent_config.post_call_extraction.options.empty"
+        )
+      )
+      .optional(),
+  })
+  .strict()
+  .superRefine((field, ctx) => {
+    if (field.type !== "enum") {
+      if (field.options !== undefined) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["options"],
+          message:
+            "schemas.agent_config.post_call_extraction.options.only_enum",
+        })
+      }
+      return
+    }
+
+    if (!field.options?.length) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["options"],
+        message: "schemas.agent_config.post_call_extraction.options.required",
+      })
+      return
+    }
+
+    if (new Set(field.options).size !== field.options.length) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["options"],
+        message: "schemas.agent_config.post_call_extraction.options.duplicate",
+      })
+    }
+  })
+
+export const extractionFieldsSchema = z
+  .array(extractionFieldSchema)
+  .min(1, "schemas.agent_config.post_call_extraction.fields.min")
+  .max(30, "schemas.agent_config.post_call_extraction.fields.max")
+  .superRefine((fields, ctx) => {
+    const keys = new Set<string>()
+    fields.forEach((field, index) => {
+      if (keys.has(field.key)) {
+        ctx.addIssue({
+          code: "custom",
+          path: [index, "key"],
+          message: "schemas.agent_config.post_call_extraction.key.duplicate",
+        })
+      }
+      keys.add(field.key)
+    })
+  })
+
+export const postCallExtractionSchema = z
+  .object({
+    fields: extractionFieldsSchema,
+  })
+  .strict()
+
 export const agentConfigSchema = z
   .object({
     stt: sttConfigSchema,
@@ -447,6 +526,7 @@ export const agentConfigSchema = z
       .array(flowNodeConfigSchema)
       .min(1, "schemas.agent_config.agent_config.nodes.min"),
     edges: z.array(flowEdgeConfigSchema),
+    postCallExtraction: postCallExtractionSchema.exactOptional(),
   })
   .superRefine((config, ctx) => {
     const toolIds = new Set<string>()

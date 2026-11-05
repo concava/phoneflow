@@ -385,7 +385,8 @@
       },
       "flow_config_buttons": {
         "global_prompt": "Prompt global",
-        "variables": "Variables"
+        "variables": "Variables",
+        "post_call_extraction": "Extracción tras la llamada"
       },
       "import_agent_form": {
         "trigger": "Importar",
@@ -1021,6 +1022,54 @@
               "new_webhook": "Nueva herramienta de webhook"
             }
           }
+        },
+        "extraction": {
+          "title": "Extracción tras la llamada",
+          "description": "Campos que se rellenan a partir de la transcripción al terminar cada llamada. No están disponibles durante la llamada.",
+          "empty": "Todavía no hay campos",
+          "add_field": "Añadir campo",
+          "edit_field": "Editar campo",
+          "remove_field": "Quitar campo",
+          "types": {
+            "string": "Texto",
+            "number": "Número",
+            "boolean": "Booleano",
+            "enum": "Lista"
+          },
+          "dialog": {
+            "add_title": "Añadir campo",
+            "edit_title": "Editar campo",
+            "description": "Describe el valor que hay que extraer de la transcripción",
+            "key": {
+              "label": "Clave",
+              "placeholder": "cita_reservada"
+            },
+            "type": {
+              "label": "Tipo"
+            },
+            "field_description": {
+              "label": "Descripción",
+              "placeholder": "Si la persona ha reservado una cita durante la llamada"
+            },
+            "nullable": {
+              "label": "Permitir valor vacío",
+              "description": "Deja el campo vacío si la transcripción no lo respalda, en lugar de forzar una respuesta"
+            },
+            "options": {
+              "label": "Opciones",
+              "description": "Valores separados por comas entre los que puede elegir el modelo",
+              "placeholder": "interesado, no_interesado, volver_a_llamar"
+            }
+          },
+          "test": {
+            "title": "Probar en una llamada anterior",
+            "description": "Ejecuta los campos actuales, guardados o no, sobre la transcripción de una llamada anterior. La llamada no cambia.",
+            "call": {
+              "placeholder": "Selecciona una llamada"
+            },
+            "no_calls": "Este agente todavía no tiene llamadas terminadas",
+            "run": "Ejecutar prueba"
+          }
         }
       }
     },
@@ -1291,6 +1340,32 @@
           "completed": "Completada",
           "in_progress": "En curso",
           "no_answer": "Sin respuesta"
+        }
+      },
+      "call_extraction": {
+        "title": "Extracción tras la llamada",
+        "status": {
+          "pending": "En curso",
+          "completed": "Completada",
+          "failed": "Fallida",
+          "skipped": "Omitida"
+        },
+        "errors": {
+          "llm_not_configured": "El modelo de extracción no está configurado en este servidor",
+          "no_transcript": "La llamada no tiene transcripción",
+          "llm_request_failed": "No se ha podido contactar con el modelo de extracción",
+          "invalid_output": "El modelo de extracción ha devuelto una respuesta no válida",
+          "enqueue_failed": "No se ha podido poner en cola la extracción",
+          "internal_error": "La extracción ha fallado por un error interno"
+        },
+        "values": {
+          "yes": "Sí",
+          "no": "No",
+          "empty": "Sin valor"
+        },
+        "rerun": "Repetir",
+        "toasts": {
+          "rerun_started": "Extracción iniciada"
         }
       }
     },

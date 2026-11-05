@@ -385,7 +385,8 @@
       },
       "flow_config_buttons": {
         "global_prompt": "Global prompt",
-        "variables": "Variables"
+        "variables": "Variables",
+        "post_call_extraction": "Post-call extraction"
       },
       "import_agent_form": {
         "trigger": "Import",
@@ -1021,6 +1022,54 @@
               "new_webhook": "New webhook tool"
             }
           }
+        },
+        "extraction": {
+          "title": "Post-call extraction",
+          "description": "Fields filled in from the transcript after each call. They are not available during the call.",
+          "empty": "No fields yet",
+          "add_field": "Add field",
+          "edit_field": "Edit field",
+          "remove_field": "Remove field",
+          "types": {
+            "string": "Text",
+            "number": "Number",
+            "boolean": "Boolean",
+            "enum": "Enum"
+          },
+          "dialog": {
+            "add_title": "Add field",
+            "edit_title": "Edit field",
+            "description": "Describe the value to extract from the transcript",
+            "key": {
+              "label": "Key",
+              "placeholder": "appointment_booked"
+            },
+            "type": {
+              "label": "Type"
+            },
+            "field_description": {
+              "label": "Description",
+              "placeholder": "Whether the caller booked an appointment during the call"
+            },
+            "nullable": {
+              "label": "Allow empty value",
+              "description": "Leave the field empty when the transcript has no evidence instead of forcing an answer"
+            },
+            "options": {
+              "label": "Options",
+              "description": "Comma-separated values the model can choose from",
+              "placeholder": "interested, not_interested, callback"
+            }
+          },
+          "test": {
+            "title": "Test on a past call",
+            "description": "Runs the current fields, saved or not, on the transcript of a past call. The call is not changed.",
+            "call": {
+              "placeholder": "Select a call"
+            },
+            "no_calls": "This agent has no finished calls yet",
+            "run": "Run test"
+          }
         }
       }
     },
@@ -1291,6 +1340,32 @@
           "completed": "Completed",
           "in_progress": "In progress",
           "no_answer": "No answer"
+        }
+      },
+      "call_extraction": {
+        "title": "Post-call extraction",
+        "status": {
+          "pending": "Running",
+          "completed": "Completed",
+          "failed": "Failed",
+          "skipped": "Skipped"
+        },
+        "errors": {
+          "llm_not_configured": "The extraction model is not configured on this server",
+          "no_transcript": "The call has no transcript",
+          "llm_request_failed": "The extraction model could not be reached",
+          "invalid_output": "The extraction model returned an invalid answer",
+          "enqueue_failed": "The extraction could not be queued",
+          "internal_error": "The extraction failed because of an internal error"
+        },
+        "values": {
+          "yes": "Yes",
+          "no": "No",
+          "empty": "No value"
+        },
+        "rerun": "Rerun",
+        "toasts": {
+          "rerun_started": "Extraction started"
         }
       }
     },

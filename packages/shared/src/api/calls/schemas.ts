@@ -64,6 +64,35 @@ export const completeCallRequestSchema = z
   })
   .strict()
 
+export const extractionErrorCodeSchema = z.enum([
+  "llm_not_configured",
+  "no_transcript",
+  "llm_request_failed",
+  "invalid_output",
+  "enqueue_failed",
+  "internal_error",
+])
+
+export const callExtractionSchema = z.record(
+  z.string(),
+  z.union([z.string(), z.number(), z.boolean(), z.null()])
+)
+
+export const extractionResultSchema = z.discriminatedUnion("status", [
+  z
+    .object({
+      status: z.literal("completed"),
+      extraction: callExtractionSchema,
+    })
+    .strict(),
+  z
+    .object({
+      status: z.enum(["failed", "skipped"]),
+      error: extractionErrorCodeSchema,
+    })
+    .strict(),
+])
+
 export const triggerOutboundCallRequestSchema = z
   .object({
     phoneNumberId: z.uuid(),
