@@ -120,6 +120,9 @@
         },
         "end_name": {
           "required": "End node name is required"
+        },
+        "knowledge_base_id": {
+          "invalid": "Knowledge base is not valid"
         }
       },
       "expression_condition": {
@@ -145,7 +148,8 @@
           "unknown_tool": "Unknown tool",
           "duplicate_tool": "Duplicate tool",
           "start_required": "Add a start node to the flow",
-          "start_only_one": "Only one start node is allowed"
+          "start_only_one": "Only one start node is allowed",
+          "duplicate_knowledge_base": "Knowledge base is already on this node"
         },
         "edges": {
           "duplicate": "Duplicate transition",
@@ -189,6 +193,16 @@
         "sip_password": {
           "required_with_username": "SIP password is required when a username is set"
         }
+      }
+    },
+    "knowledge_bases": {
+      "name": {
+        "required": "Name is required",
+        "max": "Name must be 255 characters or fewer"
+      },
+      "query": {
+        "required": "Enter a question",
+        "max": "The question must be 1000 characters or fewer"
       }
     }
   }

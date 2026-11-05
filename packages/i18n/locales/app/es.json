@@ -292,6 +292,10 @@
       "title": "Página no encontrada",
       "description": "La página que buscas no existe o se ha movido",
       "return_home": "Volver al inicio"
+    },
+    "knowledge_bases": {
+      "page_title": "Bases de conocimiento - Phoneflow",
+      "breadcrumb": "Bases de conocimiento"
     }
   },
   "components": {
@@ -1020,6 +1024,13 @@
               "all_attached": "Todas las herramientas ya están en este nodo",
               "new_webhook": "Nueva herramienta de webhook"
             }
+          },
+          "knowledge_bases": {
+            "label": "Bases de conocimiento",
+            "add": "Añadir base de conocimiento",
+            "remove": "Quitar del nodo",
+            "deleted": "Base de conocimiento eliminada",
+            "none": "No hay bases de conocimiento disponibles"
           }
         }
       }
@@ -1831,7 +1842,8 @@
             "agent": "Agentes",
             "phone_number": "Números de teléfono",
             "calls": "Llamadas",
-            "billing": "Facturación"
+            "billing": "Facturación",
+            "knowledge_base": "Bases de conocimiento"
           },
           "actions": {
             "create": "crear",
@@ -1901,7 +1913,8 @@
           "batch_calls": "Llamadas por lotes",
           "calls": "Llamadas",
           "contacts": "Contactos",
-          "settings": "Configuración"
+          "settings": "Configuración",
+          "knowledge_bases": "Bases de conocimiento"
         }
       },
       "sidebar_credits": {
@@ -1972,6 +1985,57 @@
       "deleted_agent": "Agente eliminado",
       "deleted_phone_number": "Número de teléfono eliminado",
       "agent_version_draft": "Última (borrador)"
+    },
+    "knowledge_bases": {
+      "create_form": {
+        "trigger": "Nueva base de conocimiento",
+        "title": "Nueva base de conocimiento",
+        "description": "Añade documentos que tus agentes puedan consultar durante las llamadas.",
+        "name": "Nombre"
+      },
+      "table": {
+        "columns": {
+          "name": "Nombre",
+          "documents": "Documentos",
+          "created_at": "Creada"
+        },
+        "delete_label": "Eliminar {{name}}",
+        "delete_dialog": {
+          "title": "Eliminar base de conocimiento",
+          "description": "Se eliminarán para siempre \"{{name}}\" y sus documentos. Se quitará de los borradores de los agentes, y las versiones publicadas que la usen dejarán de encontrar esta información."
+        }
+      },
+      "sheet": {
+        "documents": "Documentos",
+        "upload_placeholder": "Haz clic o suelta un archivo .txt o .md de hasta 2 MB",
+        "too_large": "El archivo debe ocupar 2 MB como máximo",
+        "chunks_one": "{{count}} fragmento",
+        "chunks_other": "{{count}} fragmentos",
+        "reprocess": "Volver a procesar {{name}}",
+        "delete_label": "Eliminar {{name}}",
+        "delete_dialog": {
+          "title": "Eliminar documento",
+          "description": "Se eliminará para siempre \"{{name}}\". Los agentes dejarán de encontrar su información."
+        },
+        "status": {
+          "pending": "Pendiente",
+          "processing": "Procesando",
+          "ready": "Listo",
+          "failed": "Error"
+        },
+        "errors": {
+          "embeddings_not_configured": "Los embeddings no están configurados en el worker. Define EMBEDDINGS_BASE_URL y EMBEDDINGS_MODEL.",
+          "embeddings_dimension_mismatch": "El modelo de embeddings debe devolver 1536 dimensiones. Revisa EMBEDDINGS_MODEL.",
+          "embeddings_request_failed": "El proveedor de embeddings ha devuelto un error. Inténtalo de nuevo más tarde.",
+          "no_content": "El documento no contiene texto.",
+          "processing_failed": "No se ha podido procesar el documento. Inténtalo de nuevo más tarde."
+        },
+        "search": {
+          "label": "Probar búsqueda",
+          "placeholder": "Haz una pregunta...",
+          "no_results": "No se han encontrado coincidencias"
+        }
+      }
     }
   }
 }

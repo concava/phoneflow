@@ -10,6 +10,7 @@ const defaultRoles = {
       ...adminAc.statements,
       agent: ["create", "update", "delete"],
       phoneNumber: ["create", "update", "delete"],
+      knowledgeBase: ["create", "update", "delete"],
       calls: ["create"],
       billing: ["purchase"],
     },

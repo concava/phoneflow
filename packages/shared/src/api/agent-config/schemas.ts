@@ -290,6 +290,7 @@ const responseVariableSchema = z
 const reservedToolNames = new Set([
   "end_call",
   "extract_variables",
+  "search_knowledge_base",
   "send_dtmf",
   "transfer_call",
 ])
@@ -347,6 +348,13 @@ export const flowNodeConfigSchema = z.discriminatedUnion("type", [
         ivrNavigation: ivrNavigationToolSchema.optional(),
         transferCall: transferCallToolSchema.optional(),
         toolIds: z.array(z.string().trim().min(1)).optional(),
+        knowledgeBaseIds: z
+          .array(
+            z.uuid(
+              "schemas.agent_config.flow_node_config.knowledge_base_id.invalid"
+            )
+          )
+          .exactOptional(),
       })
       .strict(),
   }),
@@ -537,6 +545,21 @@ export const agentConfigSchema = z
             })
           }
           seenToolIds.add(toolId)
+        })
+      }
+
+      if (node.type === "conversation" && node.data.knowledgeBaseIds) {
+        const seen = new Set<string>()
+        node.data.knowledgeBaseIds.forEach((id, idIndex) => {
+          if (seen.has(id)) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["nodes", index, "data", "knowledgeBaseIds", idIndex],
+              message:
+                "schemas.agent_config.agent_config.nodes.duplicate_knowledge_base",
+            })
+          }
+          seen.add(id)
         })
       }
     })

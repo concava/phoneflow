@@ -120,6 +120,9 @@
         },
         "end_name": {
           "required": "El nombre del nodo final es obligatorio"
+        },
+        "knowledge_base_id": {
+          "invalid": "La base de conocimiento no es válida"
         }
       },
       "expression_condition": {
@@ -145,7 +148,8 @@
           "unknown_tool": "Herramienta desconocida",
           "duplicate_tool": "Herramienta duplicada",
           "start_required": "Añade un nodo de inicio al flujo",
-          "start_only_one": "Solo se permite un nodo de inicio"
+          "start_only_one": "Solo se permite un nodo de inicio",
+          "duplicate_knowledge_base": "La base de conocimiento ya está en este nodo"
         },
         "edges": {
           "duplicate": "Transición duplicada",
@@ -189,6 +193,16 @@
         "sip_password": {
           "required_with_username": "La contraseña SIP es obligatoria cuando se indica un usuario"
         }
+      }
+    },
+    "knowledge_bases": {
+      "name": {
+        "required": "El nombre es obligatorio",
+        "max": "El nombre debe tener 255 caracteres como máximo"
+      },
+      "query": {
+        "required": "Escribe una pregunta",
+        "max": "La pregunta debe tener 1000 caracteres como máximo"
       }
     }
   }

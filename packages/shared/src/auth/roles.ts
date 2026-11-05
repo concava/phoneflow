@@ -8,6 +8,7 @@ const statement = {
   ...defaultStatements,
   agent: ["create", "update", "delete"],
   phoneNumber: ["create", "update", "delete"],
+  knowledgeBase: ["create", "update", "delete"],
   calls: ["create"],
   billing: ["purchase"],
 }
@@ -18,6 +19,7 @@ export const owner = ac.newRole({
   ...ownerAc.statements,
   agent: ["create", "update", "delete"],
   phoneNumber: ["create", "update", "delete"],
+  knowledgeBase: ["create", "update", "delete"],
   calls: ["create"],
   billing: ["purchase"],
 })

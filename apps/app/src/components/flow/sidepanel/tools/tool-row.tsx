@@ -46,10 +46,10 @@ export function ToolRow({
   icon: LucideIcon
   title: string
   summary?: string
-  editLabel: string
+  editLabel?: string
   removeLabel: string
   readOnly?: boolean
-  onEdit: () => void
+  onEdit?: () => void
   onRemove: () => void
 }) {
   return (
@@ -63,14 +63,16 @@ export function ToolRow({
           </div>
         ) : null}
       </div>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label={editLabel}
-        onClick={onEdit}
-      >
-        <PencilLine />
-      </Button>
+      {onEdit ? (
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={editLabel}
+          onClick={onEdit}
+        >
+          <PencilLine />
+        </Button>
+      ) : null}
       <Button
         variant="ghost"
         className="text-destructive!"

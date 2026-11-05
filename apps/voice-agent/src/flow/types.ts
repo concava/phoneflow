@@ -21,6 +21,7 @@ export interface FlowConversationNode {
   ivrNavigation?: IvrNavigationTool
   transferCall?: TransferCallTool
   toolIds?: string[]
+  knowledgeBaseIds?: string[]
   outgoingEdges: FlowEdge[]
 }
 

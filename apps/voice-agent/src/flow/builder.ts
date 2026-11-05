@@ -42,6 +42,10 @@ export function buildFlowGraph(config: AgentConfig) {
         flowNode.toolIds = node.data.toolIds
       }
 
+      if (node.data.knowledgeBaseIds) {
+        flowNode.knowledgeBaseIds = node.data.knowledgeBaseIds
+      }
+
       if (node.data.startSpeaker) {
         flowNode.startSpeaker = node.data.startSpeaker
       }

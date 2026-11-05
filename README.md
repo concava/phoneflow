@@ -13,5 +13,19 @@ Build voice agents by connecting nodes, deploy them to handle inbound and outbou
 - **Version control**: Publish immutable agent versions so you can iterate with confidence, switch between versions, and roll back at any time.
 - **Phone numbers**: Import numbers from any provider (Twilio, Telnyx, Zadarma, …) by filling in the number and its SIP credentials.
 - **Inbound and outbound calls**: Route incoming calls to a chosen agent and version, and trigger outbound calls to any number with any agent and version.
+- **Knowledge bases**: Upload text and Markdown documents and let agents look them up in real time during a call, with per-node selection and a search box to test retrieval.
 - **Call monitoring**: Watch every call in real time with visibility into start time, duration, cost (broken down by model), channel (phone or web), direction (inbound or outbound), from/to numbers, and the agent and version that answered.
 
+## Self-hosting requirements
+
+Phoneflow needs Postgres with the [pgvector](https://github.com/pgvector/pgvector) extension, version 0.8 or newer. The stock `postgres` image doesn't include it, so use `pgvector/pgvector:pg17` or a managed Postgres that offers the extension. The repository doesn't ship a Postgres container: you point `DATABASE_URL` at your own server. Migrations run `CREATE EXTENSION IF NOT EXISTS vector`, so either the database user must be allowed to create extensions or the extension must already be installed. If it's already installed at an older version, upgrade it with `ALTER EXTENSION vector UPDATE`.
+
+Knowledge bases need an OpenAI-compatible embeddings endpoint. Set these variables on both `apps/api` and `apps/worker`:
+
+| Variable | Description |
+| --- | --- |
+| `EMBEDDINGS_BASE_URL` | Base URL of the API, without `/embeddings`, for example `https://api.openai.com/v1` |
+| `EMBEDDINGS_API_KEY` | API key. Leave it empty for local servers that don't use one |
+| `EMBEDDINGS_MODEL` | A model that returns 1536 dimensions, for example `text-embedding-3-small` |
+
+If they are unset, document uploads fail with a clear error and the rest of the platform keeps working. Changing the model or its dimension requires re-indexing every document.

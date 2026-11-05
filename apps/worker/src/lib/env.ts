@@ -9,4 +9,7 @@ export const env = {
   EMAIL_USER: process.env.EMAIL_USER ?? "",
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD ?? "",
   EMAIL_FROM: process.env.EMAIL_FROM ?? "",
+  EMBEDDINGS_BASE_URL: process.env.EMBEDDINGS_BASE_URL ?? "",
+  EMBEDDINGS_API_KEY: process.env.EMBEDDINGS_API_KEY ?? "",
+  EMBEDDINGS_MODEL: process.env.EMBEDDINGS_MODEL ?? "",
 }

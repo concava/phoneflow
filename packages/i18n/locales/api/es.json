@@ -20,7 +20,8 @@
     "list_versions_failed": "No se pudieron cargar las versiones del agente",
     "version_not_found": "Versión del agente no encontrada",
     "load_version_config_failed": "No se pudo cargar la configuración de la versión del agente",
-    "publish_failed": "No se pudo publicar la versión del agente"
+    "publish_failed": "No se pudo publicar la versión del agente",
+    "knowledge_base_not_found": "El nodo \"{{node}}\" usa una base de conocimiento que no existe en esta organización. Quítala del nodo."
   },
   "batch_calls": {
     "list_failed": "No se pudieron cargar las llamadas por lotes",
@@ -89,5 +90,25 @@
     "image_type_invalid": "La imagen debe ser JPEG, PNG, WebP o GIF",
     "image_too_large": "La imagen debe ocupar 2MB o menos",
     "upload_image_failed": "No se pudo subir la imagen"
+  },
+  "knowledge_bases": {
+    "list_failed": "No se han podido cargar las bases de conocimiento",
+    "create_failed": "No se ha podido crear la base de conocimiento",
+    "not_found": "Base de conocimiento no encontrada",
+    "load_failed": "No se ha podido cargar la base de conocimiento",
+    "delete_failed": "No se ha podido eliminar la base de conocimiento",
+    "embeddings_not_configured": "Los embeddings no están configurados en este servidor. Define EMBEDDINGS_BASE_URL y EMBEDDINGS_MODEL para usar bases de conocimiento.",
+    "embeddings_dimension_mismatch": "El modelo de embeddings debe devolver 1536 dimensiones. Revisa EMBEDDINGS_MODEL.",
+    "document_required": "Hace falta un archivo",
+    "document_type_invalid": "Solo se admiten archivos .txt y .md",
+    "document_too_large": "El archivo debe ocupar 2 MB como máximo",
+    "document_encoding_invalid": "El archivo debe ser texto UTF-8 válido",
+    "document_empty": "El archivo no contiene texto",
+    "document_not_found": "Documento no encontrado",
+    "document_in_progress": "El documento ya se está procesando",
+    "upload_failed": "No se ha podido subir el documento",
+    "delete_document_failed": "No se ha podido eliminar el documento",
+    "reprocess_failed": "No se ha podido volver a procesar el documento",
+    "search_failed": "No se ha podido buscar en la base de conocimiento"
   }
 }
