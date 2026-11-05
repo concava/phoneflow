@@ -15,6 +15,10 @@ function requiredString(message: string) {
   return z.string().trim().min(1, message)
 }
 
+function isHttpsUrl(value: string) {
+  return /^https:\/\//i.test(value) && URL.canParse(value)
+}
+
 export const sttConfigSchema = z
   .object({
     model: requiredString("schemas.agent_config.stt_config.model.required"),
@@ -270,6 +274,24 @@ const toolKeyValueSchema = z
   })
   .strict()
 
+const preCallWebhookTimeoutMessage =
+  "schemas.agent_config.pre_call_webhook.timeout_ms.range"
+
+export const preCallWebhookSchema = z
+  .object({
+    url: z
+      .string()
+      .trim()
+      .refine(isHttpsUrl, "schemas.agent_config.pre_call_webhook.url.invalid"),
+    headers: z.array(toolKeyValueSchema),
+    timeoutMs: z
+      .number(preCallWebhookTimeoutMessage)
+      .int(preCallWebhookTimeoutMessage)
+      .min(500, preCallWebhookTimeoutMessage)
+      .max(3000, preCallWebhookTimeoutMessage),
+  })
+  .strict()
+
 const responseVariableSchema = z
   .object({
     name: requiredString("schemas.agent_config.response_variable.name.required")
@@ -438,6 +460,7 @@ export const agentConfigSchema = z
     tts: ttsConfigSchema,
     turnHandling: turnHandlingConfigSchema,
     backgroundAudio: backgroundAudioSchema.exactOptional(),
+    preCallWebhook: preCallWebhookSchema.exactOptional(),
     call: callSettingsSchema,
     globalPrompt: z.string(),
     timezone: z.string(),

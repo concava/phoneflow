@@ -80,6 +80,14 @@
           "format": "Usa minúsculas, números o guiones bajos"
         }
       },
+      "pre_call_webhook": {
+        "url": {
+          "invalid": "La URL del webhook previo a la llamada debe ser una URL https válida"
+        },
+        "timeout_ms": {
+          "range": "El tiempo de espera del webhook previo a la llamada debe ser un número entero entre 500 y 3000 ms"
+        }
+      },
       "tool_key_value": {
         "key": {
           "required": "La clave es obligatoria"

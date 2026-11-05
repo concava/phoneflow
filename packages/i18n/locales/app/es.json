@@ -503,6 +503,27 @@
             "timezone": {
               "label": "Zona horaria",
               "description": "Se usa para {{date}}, {{time}} y {{timezone}}"
+            },
+            "pre_call_webhook": {
+              "label": "Webhook previo a la llamada",
+              "description": "Solo para llamadas telefónicas entrantes. Antes de que hable el agente, tu servidor puede devolver datos de quien llama para rellenar variables dinámicas.",
+              "url": {
+                "label": "URL",
+                "description": "Recibe una petición POST con callId, agentId, agentVersionId, fromNumber, toNumber y direction en JSON. Debe usar https y un nombre de host: no se permiten localhost ni direcciones IP, y no se siguen las redirecciones."
+              },
+              "timeout": {
+                "label": "Tiempo de espera (ms)",
+                "description": "Entre 500 y 3000. El agente espera como máximo este tiempo antes de empezar a hablar."
+              },
+              "headers": {
+                "label": "Cabeceras",
+                "key_placeholder": "Clave, p. ej. Authorization",
+                "value_placeholder": "Valor, p. ej. Bearer token"
+              },
+              "response": {
+                "label": "Respuesta esperada",
+                "description": "Devuelve JSON con valores de tipo cadena. Los valores solo rellenan las variables dinámicas que hayas declarado y cualquier otra clave se ignora. Si la petición falla o se agota el tiempo, la llamada continúa con los valores predeterminados."
+              }
             }
           },
           "model_tab": {

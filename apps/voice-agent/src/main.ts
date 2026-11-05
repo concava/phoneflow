@@ -22,6 +22,7 @@ import {
 } from "@/lib/calls"
 import { endCall } from "@/lib/end-call"
 import { env } from "@/lib/env"
+import { applyPreCallWebhook } from "@/lib/pre-call"
 import { setupTracing } from "@/lib/tracing"
 import { buildCallTranscript } from "@/lib/transcript"
 import { LLM } from "@/providers/llm"
@@ -59,7 +60,7 @@ export default defineAgent({
       }
     }
 
-    const { callId, config, sip } = await startCall(
+    const { callId, agentId, agentVersionId, config, sip } = await startCall(
       participant.attributes,
       metadata,
       livekitRoomName
@@ -105,6 +106,35 @@ export default defineAgent({
       },
     })
 
+    // Registered before the webhook wait so a caller who hangs up during it
+    // still completes the call.
+    ctx.room.on("participantDisconnected", (remoteParticipant) => {
+      if (remoteParticipant.identity === participant.identity) {
+        completeCall(
+          callId,
+          "completed",
+          buildCallTranscript(session.history),
+          variables.snapshot()
+        )
+      }
+    })
+
+    if (metadata.direction === "inbound" && config.preCallWebhook) {
+      await applyPreCallWebhook({
+        webhook: config.preCallWebhook,
+        dynamicVariables: config.dynamicVariables,
+        variables,
+        payload: {
+          callId,
+          agentId,
+          agentVersionId,
+          fromNumber: participant.attributes["sip.phoneNumber"] ?? "",
+          toNumber: participant.attributes["sip.trunkPhoneNumber"] ?? "",
+          direction: metadata.direction,
+        },
+      })
+    }
+
     setTimeout(endCall, config.call.maxDurationSec * 1000)
 
     let idleCount = 0
@@ -128,17 +158,6 @@ export default defineAgent({
         session._updateUserState("listening")
       }
     )
-
-    ctx.room.on("participantDisconnected", (remoteParticipant) => {
-      if (remoteParticipant.identity === participant.identity) {
-        completeCall(
-          callId,
-          "completed",
-          buildCallTranscript(session.history),
-          variables.snapshot()
-        )
-      }
-    })
 
     await session.start({
       agent: new FlowAgent(flowGraph, variables, sip, callId, ctx.room),

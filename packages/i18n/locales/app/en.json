@@ -503,6 +503,27 @@
             "timezone": {
               "label": "Timezone",
               "description": "Used for {{date}}, {{time}}, and {{timezone}}"
+            },
+            "pre_call_webhook": {
+              "label": "Pre-call webhook",
+              "description": "Inbound phone calls only. Before the agent speaks, your server can return caller data to fill dynamic variables.",
+              "url": {
+                "label": "URL",
+                "description": "Receives a POST request with callId, agentId, agentVersionId, fromNumber, toNumber and direction as JSON. It must use https and a hostname: localhost and IP addresses are not allowed, and redirects are not followed."
+              },
+              "timeout": {
+                "label": "Timeout (ms)",
+                "description": "Between 500 and 3000. The agent waits this long at most before it starts speaking."
+              },
+              "headers": {
+                "label": "Headers",
+                "key_placeholder": "Key, e.g. Authorization",
+                "value_placeholder": "Value, e.g. Bearer token"
+              },
+              "response": {
+                "label": "Expected response",
+                "description": "Return JSON with string values. Values only fill dynamic variables you have declared, and any other key is ignored. If the request fails or times out, the call continues with the default values."
+              }
             }
           },
           "model_tab": {

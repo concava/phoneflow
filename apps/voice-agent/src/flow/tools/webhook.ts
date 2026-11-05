@@ -22,8 +22,12 @@ class WebhookRequestError extends Error {
   }
 }
 
-function assertHttpsUrl(url: URL) {
-  const hostname = url.hostname.replace(/^\[|\]$/g, "").toLowerCase()
+export function assertHttpsUrl(url: URL) {
+  // A trailing dot still resolves to the same host, so "localhost." must not pass.
+  const hostname = url.hostname
+    .replace(/^\[|\]$/g, "")
+    .replace(/\.+$/, "")
+    .toLowerCase()
   if (
     url.protocol !== "https:" ||
     !hostname ||

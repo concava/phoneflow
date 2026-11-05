@@ -5,7 +5,7 @@ import type {
 import { parseJsonObject } from "@/lib/json"
 
 const VARIABLE_PATTERN = /\{\{\s*([a-z0-9_]+)\s*\}\}/g
-const SYSTEM_VARIABLE_KEYS = new Set([
+export const SYSTEM_VARIABLE_KEYS = new Set([
   "date",
   "time",
   "timezone",
