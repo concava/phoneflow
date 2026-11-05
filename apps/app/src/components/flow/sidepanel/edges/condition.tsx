@@ -82,6 +82,14 @@ export function EdgePanel({ edge }: EdgePanelProps) {
   const { t } = useTranslation()
   const readOnly = useAgentStore((state) => state.readOnly)
   const setEdge = useAgentStore((state) => state.setEdge)
+  const fromFunctionNode = useAgentStore(
+    (state) =>
+      state.config.nodes.find((node) => node.id === edge.source)?.type ===
+      "function"
+  )
+  const availableTypes = fromFunctionNode
+    ? conditionTypes.filter((type) => type.value !== "prompt")
+    : conditionTypes
 
   const condition = edge.data.condition
 
@@ -127,7 +135,7 @@ export function EdgePanel({ edge }: EdgePanelProps) {
             }
           >
             <TabsList>
-              {conditionTypes.map((type) => (
+              {availableTypes.map((type) => (
                 <TabsTrigger
                   key={type.value}
                   value={type.value}
@@ -265,7 +273,13 @@ export function EdgePanel({ edge }: EdgePanelProps) {
 
         {condition.type === "always" && (
           <p className="text-sm text-muted-foreground">
-            {t("components.flow.sidepanel.edges.condition.always_description")}
+            {fromFunctionNode
+              ? t(
+                  "components.flow.sidepanel.edges.condition.always_description_function"
+                )
+              : t(
+                  "components.flow.sidepanel.edges.condition.always_description"
+                )}
           </p>
         )}
       </FieldGroup>

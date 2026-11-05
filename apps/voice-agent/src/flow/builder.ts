@@ -1,14 +1,9 @@
 import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
-import type {
-  FlowConversationNode,
-  FlowEdge,
-  FlowGraph,
-  FlowNode,
-} from "@/flow/types"
+import type { FlowEdge, FlowGraph, FlowNode } from "@/flow/types"
 
 export function buildFlowGraph(config: AgentConfig) {
   const nodesById = new Map<string, FlowNode>()
-  let startNode: FlowConversationNode | undefined
+  let startNode: FlowGraph["startNode"] | undefined
 
   for (const node of config.nodes) {
     let flowNode: FlowNode
@@ -50,6 +45,23 @@ export function buildFlowGraph(config: AgentConfig) {
         flowNode.isStart = true
         startNode = flowNode
       }
+    } else if (node.type === "function") {
+      flowNode = {
+        id: node.id,
+        type: node.type,
+        name: node.data.name,
+        toolId: node.data.toolId,
+        outgoingEdges: [],
+      }
+
+      if (node.data.message) {
+        flowNode.message = node.data.message
+      }
+
+      if (node.data.isStart) {
+        flowNode.isStart = true
+        startNode = flowNode
+      }
     } else if (node.type === "end") {
       flowNode = {
         id: node.id,
@@ -72,7 +84,7 @@ export function buildFlowGraph(config: AgentConfig) {
     }
 
     const sourceNode = nodesById.get(edge.source)!
-    if (sourceNode.type === "conversation") {
+    if (sourceNode.type !== "end") {
       sourceNode.outgoingEdges.push(flowEdge)
     }
   }

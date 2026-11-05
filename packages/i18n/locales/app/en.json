@@ -300,6 +300,7 @@
         "trigger": "Add node",
         "start": "Start",
         "conversation": "Conversation",
+        "function": "Function",
         "end": "End"
       },
       "agent_auto_save": {
@@ -440,6 +441,11 @@
             "ivr_navigation": "IVR navigation",
             "transfer_call": "Transfer call"
           }
+        },
+        "function": {
+          "webhook": "Webhook:",
+          "no_tool": "No webhook selected",
+          "message": "Says:"
         }
       },
       "edges": {
@@ -854,6 +860,31 @@
               "say": "Say"
             }
           },
+          "function": {
+            "title": "Function node",
+            "title_start": "Start function node",
+            "name": {
+              "label": "Name"
+            },
+            "tool": {
+              "label": "Webhook",
+              "placeholder": "Select a webhook",
+              "edit": "Edit webhook",
+              "new_webhook": "New webhook",
+              "description": "Runs every time the flow reaches this node. The LLM does not decide whether to call it.",
+              "results": "Runs every time the flow reaches this node. Branch on {{ok}} (true or false) and {{status}} (HTTP status, empty if there was no response)."
+            },
+            "message": {
+              "label": "Message",
+              "placeholder": "One moment, let me check",
+              "description": "Optional. Played while the webhook runs. Without it, the caller hears silence."
+            },
+            "start": {
+              "label": "Start node",
+              "description": "Run this webhook as soon as the call starts, before the agent says anything."
+            },
+            "edges_description": "Outgoing transitions can be Expression or Always. Expressions are checked first and an Always transition is the fallback. If none matches, the call ends."
+          },
           "end": {
             "title": "End node",
             "name": {
@@ -883,7 +914,8 @@
               "placeholder": "value"
             },
             "add_condition": "Add condition",
-            "always_description": "Always transitions to the next node on the following turn. Must be the only transition on the node."
+            "always_description": "Always transitions to the next node on the following turn. Must be the only transition on the node.",
+            "always_description_function": "Taken when no expression transition from this function node matches."
           }
         },
         "tools": {

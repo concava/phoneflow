@@ -1,10 +1,13 @@
 import {
   Agent,
   ChatContext,
+  type ChatMessage,
   type JobContext,
+  log,
   type ModelSettings,
   type ToolContext,
   tool,
+  voice,
 } from "@livekit/agents"
 import { z } from "zod"
 
@@ -18,20 +21,31 @@ import {
 } from "@/flow/prompts"
 import { createSendDtmfTool } from "@/flow/tools/dtmf"
 import { createTransferCallTool } from "@/flow/tools/transfer-call"
-import { createWebhookTool } from "@/flow/tools/webhook"
-import type { FlowConversationNode, FlowGraph, FlowNode } from "@/flow/types"
+import { createWebhookTool, runFunctionNodeWebhook } from "@/flow/tools/webhook"
+import type {
+  FlowConversationNode,
+  FlowFunctionNode,
+  FlowGraph,
+  FlowNode,
+} from "@/flow/types"
 import type { Variables } from "@/flow/variables"
 import { endCall } from "@/lib/end-call"
 
+const MAX_CONSECUTIVE_FUNCTION_NODES = 20
+
 function buildNodeInstructions(
   graph: FlowGraph,
-  node: FlowConversationNode,
+  node: FlowGraph["startNode"],
   variables: Variables
 ) {
   const parts = [PLATFORM_INSTRUCTIONS]
 
   if (graph.globalPrompt) {
     parts.push(variables.replace(graph.globalPrompt))
+  }
+
+  if (node.type === "function") {
+    return parts.join("\n\n")
   }
 
   if (node.instructions.type === "prompt") {
@@ -55,6 +69,8 @@ export class FlowAgent extends Agent {
   private readonly sip: CallSipConnection | null
   private readonly callId: string
   private readonly room: JobContext["room"]
+  private readonly exiting = new AbortController()
+  private consecutiveFunctionNodes = 0
 
   constructor(
     graph: FlowGraph,
@@ -72,6 +88,10 @@ export class FlowAgent extends Agent {
     this.sip = sip
     this.callId = callId
     this.room = room
+  }
+
+  get isRunningFunctionNode() {
+    return this.consecutiveFunctionNodes > 0
   }
 
   private async publishActiveNode(node: FlowNode) {
@@ -186,13 +206,18 @@ export class FlowAgent extends Agent {
     })
   }
 
-  private matchedTarget(node: FlowConversationNode): FlowNode | undefined {
-    const edge = node.outgoingEdges.find(
-      (candidate) =>
-        candidate.condition.type === "always" ||
-        (candidate.condition.type === "expression" &&
-          evaluateExpression(candidate.condition, this.variables))
-    )
+  private matchedTarget(
+    node: FlowConversationNode | FlowFunctionNode
+  ): FlowNode | undefined {
+    const edge =
+      node.outgoingEdges.find(
+        (candidate) =>
+          candidate.condition.type === "expression" &&
+          evaluateExpression(candidate.condition, this.variables)
+      ) ??
+      node.outgoingEdges.find(
+        (candidate) => candidate.condition.type === "always"
+      )
     return edge?.targetNode
   }
 
@@ -204,11 +229,84 @@ export class FlowAgent extends Agent {
       return
     }
 
+    if (node.type === "function") {
+      await this.runFunctionNode(node)
+      return
+    }
+
     await this.updateInstructions(
       buildNodeInstructions(this.graph, node, this.variables)
     )
     await this.updateTools(this.buildNodeTools(node))
+    this.consecutiveFunctionNodes = 0
     await this.enterNode(node)
+  }
+
+  private async runFunctionNode(node: FlowFunctionNode) {
+    const logger = log().child({ callId: this.callId, nodeId: node.id })
+
+    this.consecutiveFunctionNodes += 1
+    if (this.consecutiveFunctionNodes > MAX_CONSECUTIVE_FUNCTION_NODES) {
+      logger.error("too many consecutive function nodes, ending the call")
+      await endCall()
+      return
+    }
+
+    const definition = this.graph.tools.find(
+      (entry) => entry.id === node.toolId
+    )
+    if (!definition) {
+      logger.error("function node tool not found, ending the call")
+      await endCall()
+      return
+    }
+
+    // The message plays while the webhook runs, so it adds no latency to it.
+    const message = this.sayFunctionNodeMessage(node, logger)
+    const result = await runFunctionNodeWebhook(
+      definition,
+      this.variables,
+      this.exiting.signal
+    )
+    await message
+
+    if (this.exiting.signal.aborted) {
+      return
+    }
+    if (!result.ok) {
+      // The output of an HTTP failure quotes the response body, which is not logged.
+      logger.warn(
+        result.status === undefined
+          ? { reason: result.output }
+          : { status: result.status },
+        "function node webhook failed"
+      )
+    }
+
+    const target = this.matchedTarget(node)
+    if (!target) {
+      logger.warn("no edge matched after function node, ending the call")
+      await endCall()
+      return
+    }
+
+    await this.transitionTo(target)
+  }
+
+  private async sayFunctionNodeMessage(
+    node: FlowFunctionNode,
+    logger: ReturnType<typeof log>
+  ) {
+    const text = node.message && this.variables.replace(node.message).trim()
+    if (!text) {
+      return
+    }
+
+    try {
+      await this.session.say(text).waitForPlayout()
+    } catch (error) {
+      logger.warn({ error }, "could not play function node message")
+    }
   }
 
   private async enterNode(node: FlowConversationNode) {
@@ -226,12 +324,42 @@ export class FlowAgent extends Agent {
 
   override async onEnter() {
     const startNode = this.graph.startNode
+    if (startNode.type === "function") {
+      await this.transitionTo(startNode)
+      return
+    }
+
     await this.publishActiveNode(startNode)
     await this.updateTools(this.buildNodeTools(startNode))
 
     if (startNode.startSpeaker === "agent") {
       await this.enterNode(startNode)
     }
+  }
+
+  override async onExit() {
+    this.exiting.abort()
+  }
+
+  // A function node decides what comes next, so a turn that ends while one runs
+  // gets no reply of its own. It is kept for the next conversation node to answer.
+  override async onUserTurnCompleted(
+    _chatCtx: ChatContext,
+    newMessage: ChatMessage
+  ) {
+    if (!this.isRunningFunctionNode) {
+      return
+    }
+
+    // LiveKit fills the metrics after this callback, but StopResponse skips that,
+    // and the call transcript drops messages without a start time.
+    newMessage.metrics = {
+      ...newMessage.metrics,
+      startedSpeakingAt: Date.now() / 1000,
+    }
+    this._chatCtx.insert(newMessage)
+    this.session._conversationItemAdded(newMessage)
+    throw new voice.StopResponse()
   }
 
   override llmNode(

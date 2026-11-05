@@ -4,6 +4,7 @@ import { EdgePanel } from "./edges/condition"
 import { GlobalPromptPanel } from "./global-prompt"
 import { ConversationNodePanel } from "./nodes/conversation"
 import { EndNodePanel } from "./nodes/end"
+import { FunctionNodePanel } from "./nodes/function"
 import { TestPanel } from "./test"
 import { VariablesPanel } from "./variables"
 
@@ -29,6 +30,10 @@ export function FlowSidePanel() {
               key={sidePanel.node.id}
               node={sidePanel.node}
             />
+          )
+        case "function":
+          return (
+            <FunctionNodePanel key={sidePanel.node.id} node={sidePanel.node} />
           )
         case "end":
           return <EndNodePanel key={sidePanel.node.id} node={sidePanel.node} />

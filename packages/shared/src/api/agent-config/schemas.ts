@@ -329,6 +329,10 @@ export const webhookToolSchema = z
 
 export const agentToolSchema = z.discriminatedUnion("type", [webhookToolSchema])
 
+export function functionNodeResultVariables(toolName: string) {
+  return { ok: `${toolName}_ok`, status: `${toolName}_status` }
+}
+
 export const flowNodeConfigSchema = z.discriminatedUnion("type", [
   z.object({
     id: z.string().trim().min(1),
@@ -347,6 +351,23 @@ export const flowNodeConfigSchema = z.discriminatedUnion("type", [
         ivrNavigation: ivrNavigationToolSchema.optional(),
         transferCall: transferCallToolSchema.optional(),
         toolIds: z.array(z.string().trim().min(1)).optional(),
+      })
+      .strict(),
+  }),
+  z.object({
+    id: z.string().trim().min(1),
+    type: z.literal("function"),
+    position: z.object({ x: z.number(), y: z.number() }),
+    data: z
+      .object({
+        name: requiredString(
+          "schemas.agent_config.flow_node_config.function_name.required"
+        ),
+        isStart: z.literal(true).optional(),
+        toolId: requiredString(
+          "schemas.agent_config.flow_node_config.function_tool.required"
+        ),
+        message: z.string().optional(),
       })
       .strict(),
   }),
@@ -515,7 +536,7 @@ export const agentConfigSchema = z
       }
       nodeIds.add(node.id)
 
-      if (node.type === "conversation" && node.data.isStart === true) {
+      if (node.type !== "end" && node.data.isStart === true) {
         startCount += 1
       }
 
@@ -549,7 +570,7 @@ export const agentConfigSchema = z
       })
     } else if (startCount > 1) {
       config.nodes.forEach((node, index) => {
-        if (node.type === "conversation" && node.data.isStart === true) {
+        if (node.type !== "end" && node.data.isStart === true) {
           ctx.addIssue({
             code: "custom",
             path: ["nodes", index],
@@ -562,6 +583,10 @@ export const agentConfigSchema = z
     const edgeIds = new Set<string>()
     const sourceTargetKeys = new Set<string>()
     const edgesBySource = new Map<string, number>()
+    const alwaysEdgesBySource = new Map<string, number>()
+    const functionNodeIds = new Set(
+      config.nodes.filter((node) => node.type === "function").map((n) => n.id)
+    )
 
     config.edges.forEach((edge, index) => {
       if (edgeIds.has(edge.id)) {
@@ -591,17 +616,55 @@ export const agentConfigSchema = z
       }
       sourceTargetKeys.add(key)
       edgesBySource.set(edge.source, (edgesBySource.get(edge.source) ?? 0) + 1)
-    })
+      if (edge.data.condition.type === "always") {
+        alwaysEdgesBySource.set(
+          edge.source,
+          (alwaysEdgesBySource.get(edge.source) ?? 0) + 1
+        )
+      }
 
-    config.edges.forEach((edge, index) => {
       if (
-        edge.data.condition.type === "always" &&
-        (edgesBySource.get(edge.source) ?? 0) > 1
+        functionNodeIds.has(edge.source) &&
+        edge.data.condition.type === "prompt"
       ) {
         ctx.addIssue({
           code: "custom",
           path: ["edges", index],
+          message: "schemas.agent_config.agent_config.edges.function_prompt",
+        })
+      }
+    })
+
+    config.edges.forEach((edge, index) => {
+      if (edge.data.condition.type !== "always") {
+        return
+      }
+      // A function node has no turn to wait for, so its always edge can act as
+      // the fallback for its expression edges.
+      if (functionNodeIds.has(edge.source)) {
+        if ((alwaysEdgesBySource.get(edge.source) ?? 0) > 1) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["edges", index],
+            message:
+              "schemas.agent_config.agent_config.edges.function_multiple_always",
+          })
+        }
+      } else if ((edgesBySource.get(edge.source) ?? 0) > 1) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["edges", index],
           message: "schemas.agent_config.agent_config.edges.always_alone",
+        })
+      }
+    })
+
+    config.nodes.forEach((node, index) => {
+      if (node.type === "function" && !edgesBySource.has(node.id)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["nodes", index],
+          message: "schemas.agent_config.agent_config.nodes.function_no_edges",
         })
       }
     })
@@ -626,6 +689,9 @@ export const agentConfigSchema = z
     const webhookRequests: { parameters: string[]; texts: string[] }[] = []
 
     for (const node of config.nodes) {
+      if (node.type === "function" && node.data.message) {
+        texts.push(node.data.message)
+      }
       if (node.type !== "conversation") {
         continue
       }
@@ -680,6 +746,66 @@ export const agentConfigSchema = z
         ],
       })
     }
+
+    const functionTools = new Set<string>()
+    config.nodes.forEach((node, index) => {
+      if (node.type !== "function") {
+        return
+      }
+      const tool = config.tools.find((entry) => entry.id === node.data.toolId)
+      if (!tool) {
+        if (node.data.toolId) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["nodes", index, "data", "toolId"],
+            message: "schemas.agent_config.agent_config.nodes.unknown_tool",
+          })
+        }
+        return
+      }
+      if (functionTools.has(tool.id)) {
+        return
+      }
+      functionTools.add(tool.id)
+
+      const { ok, status } = functionNodeResultVariables(tool.name)
+      for (const variable of [ok, status]) {
+        if (knownVariables.has(variable)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["nodes", index, "data", "toolId"],
+            message:
+              "schemas.agent_config.agent_config.nodes.function_variable_conflict",
+            params: { variable: `{{${variable}}}` },
+          })
+        }
+      }
+    })
+    for (const tool of config.tools) {
+      if (functionTools.has(tool.id)) {
+        const { ok, status } = functionNodeResultVariables(tool.name)
+        knownVariables.add(ok).add(status)
+      }
+    }
+
+    // Function nodes run without an LLM, so nothing else can fill a parameter.
+    config.nodes.forEach((node, index) => {
+      if (node.type !== "function") {
+        return
+      }
+      const tool = config.tools.find((entry) => entry.id === node.data.toolId)
+      for (const parameter of tool?.parameters ?? []) {
+        if (parameter.required && !knownVariables.has(parameter.name)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["nodes", index, "data", "toolId"],
+            message:
+              "schemas.agent_config.agent_config.nodes.function_missing_parameter",
+            params: { parameter: parameter.name },
+          })
+        }
+      }
+    })
 
     const reported = new Set<string>()
     const reportUnknown = (text: string, keys: Set<string>) => {

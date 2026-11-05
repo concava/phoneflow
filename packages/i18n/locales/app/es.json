@@ -300,6 +300,7 @@
         "trigger": "Añadir nodo",
         "start": "Inicio",
         "conversation": "Conversación",
+        "function": "Función",
         "end": "Final"
       },
       "agent_auto_save": {
@@ -440,6 +441,11 @@
             "ivr_navigation": "Navegación IVR",
             "transfer_call": "Transferir llamada"
           }
+        },
+        "function": {
+          "webhook": "Webhook:",
+          "no_tool": "Ningún webhook seleccionado",
+          "message": "Dice:"
         }
       },
       "edges": {
@@ -854,6 +860,31 @@
               "say": "Decir"
             }
           },
+          "function": {
+            "title": "Nodo de función",
+            "title_start": "Nodo de función de inicio",
+            "name": {
+              "label": "Nombre"
+            },
+            "tool": {
+              "label": "Webhook",
+              "placeholder": "Selecciona un webhook",
+              "edit": "Editar webhook",
+              "new_webhook": "Nuevo webhook",
+              "description": "Se ejecuta siempre que el flujo llega a este nodo. El LLM no decide si llamarlo.",
+              "results": "Se ejecuta siempre que el flujo llega a este nodo. Puedes ramificar con {{ok}} (true o false) y {{status}} (estado HTTP, vacío si no hubo respuesta)."
+            },
+            "message": {
+              "label": "Mensaje",
+              "placeholder": "Un momento, lo compruebo",
+              "description": "Opcional. Se reproduce mientras se ejecuta el webhook. Sin él, quien llama oye silencio."
+            },
+            "start": {
+              "label": "Nodo de inicio",
+              "description": "Ejecuta este webhook en cuanto empieza la llamada, antes de que el agente diga nada."
+            },
+            "edges_description": "Las transiciones de salida pueden ser de tipo Expresión o Siempre. Primero se comprueban las expresiones y una transición Siempre actúa como alternativa. Si ninguna coincide, la llamada termina."
+          },
           "end": {
             "title": "Nodo final",
             "name": {
@@ -883,7 +914,8 @@
               "placeholder": "valor"
             },
             "add_condition": "Añadir condición",
-            "always_description": "Siempre pasa al siguiente nodo en el turno siguiente. Debe ser la única transición del nodo."
+            "always_description": "Siempre pasa al siguiente nodo en el turno siguiente. Debe ser la única transición del nodo.",
+            "always_description_function": "Se usa cuando no coincide ninguna transición de expresión de este nodo de función."
           }
         },
         "tools": {

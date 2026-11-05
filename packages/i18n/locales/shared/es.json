@@ -118,6 +118,12 @@
         "conversation_name": {
           "required": "El nombre del nodo de conversación es obligatorio"
         },
+        "function_name": {
+          "required": "El nombre del nodo de función es obligatorio"
+        },
+        "function_tool": {
+          "required": "Selecciona un webhook para este nodo de función"
+        },
         "end_name": {
           "required": "El nombre del nodo final es obligatorio"
         }
@@ -145,12 +151,17 @@
           "unknown_tool": "Herramienta desconocida",
           "duplicate_tool": "Herramienta duplicada",
           "start_required": "Añade un nodo de inicio al flujo",
-          "start_only_one": "Solo se permite un nodo de inicio"
+          "start_only_one": "Solo se permite un nodo de inicio",
+          "function_no_edges": "El nodo de función necesita al menos una transición de salida",
+          "function_missing_parameter": "El parámetro del webhook \"{{parameter}}\" debe coincidir con una variable conocida, porque en un nodo de función ningún LLM puede rellenarlo",
+          "function_variable_conflict": "La variable \"{{variable}}\" la define este nodo de función y ya existe"
         },
         "edges": {
           "duplicate": "Transición duplicada",
           "disconnected": "La transición está desconectada",
-          "always_alone": "La transición «siempre» debe ser la única transición de ese nodo"
+          "always_alone": "La transición «siempre» debe ser la única transición de ese nodo",
+          "function_prompt": "Las transiciones de un nodo de función no pueden usar una condición de prompt",
+          "function_multiple_always": "Un nodo de función solo puede tener una transición «siempre»"
         },
         "tools": {
           "duplicate": "Herramienta duplicada",

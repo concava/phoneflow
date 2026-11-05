@@ -7,6 +7,7 @@ import { useAgentStore } from "@/stores/agent"
 import { ConditionEdge } from "./edges/condition"
 import { ConversationNode } from "./nodes/conversation"
 import { EndNode } from "./nodes/end"
+import { FunctionNode } from "./nodes/function"
 import { FlowToolbar } from "./toolbar"
 import "./canvas.css"
 
@@ -50,6 +51,7 @@ export default function Canvas() {
       onPaneClick={() => setSidePanel({ kind: "closed" })}
       nodeTypes={{
         conversation: ConversationNode,
+        function: FunctionNode,
         end: EndNode,
       }}
       edgeTypes={{

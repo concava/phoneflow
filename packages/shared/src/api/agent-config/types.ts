@@ -38,6 +38,7 @@ export type FlowConversationNode = Extract<
   FlowNodeConfig,
   { type: "conversation" }
 >
+export type FlowFunctionNode = Extract<FlowNodeConfig, { type: "function" }>
 export type FlowEndNode = Extract<FlowNodeConfig, { type: "end" }>
 export type FlowEdgeConfig = z.infer<typeof flowEdgeConfigSchema>
 export type FlowEdgeCondition = z.infer<typeof flowEdgeConditionSchema>
