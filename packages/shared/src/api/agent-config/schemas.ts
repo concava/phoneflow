@@ -15,8 +15,23 @@ function requiredString(message: string) {
   return z.string().trim().min(1, message)
 }
 
-function isHttpsUrl(value: string) {
-  return /^https:\/\//i.test(value) && URL.canParse(value)
+// Matches what the voice agent accepts at call time, so a URL that would never
+// run is refused when it is saved. The URL parser has already normalized IPv4
+// forms such as decimal or hex to dotted notation.
+function isPublicHttpsUrl(value: string) {
+  if (!/^https:\/\//i.test(value) || !URL.canParse(value)) {
+    return false
+  }
+
+  const hostname = new URL(value).hostname.replace(/\.+$/, "").toLowerCase()
+
+  return (
+    hostname !== "" &&
+    hostname !== "localhost" &&
+    !hostname.endsWith(".localhost") &&
+    !hostname.startsWith("[") &&
+    !/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)
+  )
 }
 
 export const sttConfigSchema = z
@@ -282,7 +297,10 @@ export const preCallWebhookSchema = z
     url: z
       .string()
       .trim()
-      .refine(isHttpsUrl, "schemas.agent_config.pre_call_webhook.url.invalid"),
+      .refine(
+        isPublicHttpsUrl,
+        "schemas.agent_config.pre_call_webhook.url.invalid"
+      ),
     headers: z.array(toolKeyValueSchema),
     timeoutMs: z
       .number(preCallWebhookTimeoutMessage)

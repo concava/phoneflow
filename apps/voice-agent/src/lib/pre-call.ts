@@ -6,6 +6,7 @@ import type {
 } from "@workspace/shared/api/agent-config/types"
 import { assertHttpsUrl } from "@/flow/tools/webhook"
 import { SYSTEM_VARIABLE_KEYS, type Variables } from "@/flow/variables"
+import { isBlockedAddressError, webhookFetch } from "@/lib/webhook-fetch"
 
 const BODY_LIMIT_BYTES = 64 * 1024
 const VALUE_LIMIT = 2000
@@ -46,7 +47,7 @@ function parseAllowedUrl(value: string) {
   }
 }
 
-async function readBody(response: Response) {
+async function readBody(response: { body: AsyncIterable<Uint8Array> | null }) {
   const chunks: Uint8Array[] = []
   let size = 0
 
@@ -81,7 +82,7 @@ async function requestVariables(
     headers.set("content-type", "application/json")
   }
 
-  const response = await fetch(url, {
+  const response = await webhookFetch(url, {
     method: "POST",
     headers,
     body: JSON.stringify(payload),
@@ -113,6 +114,9 @@ async function requestVariables(
 function failureDetails(error: unknown) {
   if (error instanceof PreCallError) {
     return { reason: error.reason, status: error.status }
+  }
+  if (isBlockedAddressError(error)) {
+    return { reason: "url_not_allowed" }
   }
   if (error instanceof Error && error.name === "TimeoutError") {
     return { reason: "timeout" }

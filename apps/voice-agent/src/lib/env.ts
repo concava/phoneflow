@@ -7,6 +7,8 @@ export const env = {
   LIVEKIT_API_SECRET: process.env.LIVEKIT_API_SECRET ?? "",
   LIVEKIT_URL: process.env.LIVEKIT_URL ?? "",
   LIVEKIT_AGENT_NAME: process.env.LIVEKIT_AGENT_NAME ?? "voice-agent",
+  WEBHOOK_ALLOW_PRIVATE_NETWORKS:
+    process.env.WEBHOOK_ALLOW_PRIVATE_NETWORKS === "true",
 
   // Model providers
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ?? "",

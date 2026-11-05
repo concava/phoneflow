@@ -4,6 +4,7 @@ import { z } from "zod"
 
 import type { WebhookTool } from "@workspace/shared/api/agent-config/types"
 import type { Variables } from "@/flow/variables"
+import { isBlockedAddressError, webhookFetch } from "@/lib/webhook-fetch"
 
 const LLM_RESULT_LIMIT = 15_000
 const RESPONSE_READ_LIMIT = 1_000_000
@@ -200,11 +201,16 @@ async function requestWebhook(
   }
 
   assertHttpsUrl(url)
-  const response = await fetch(url, {
+  const response = await webhookFetch(url, {
     method: tool.method,
     headers,
     body: requestBody,
     signal: AbortSignal.timeout(tool.timeoutMs),
+  }).catch((error: unknown) => {
+    if (isBlockedAddressError(error)) {
+      throw new WebhookRequestError("Webhook failed: URL is not allowed", false)
+    }
+    throw error
   })
   const body = (await response.text()).slice(0, RESPONSE_READ_LIMIT)
 
