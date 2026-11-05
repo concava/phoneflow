@@ -8,6 +8,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { env } from "@/lib/env"
 import { useTranslation } from "@/lib/i18n"
+import { isRecordingMissing } from "@/lib/recording"
 
 const PLAYBACK_RATES = [0.5, 1, 1.5, 2]
 const SPLIT_CHANNELS = [
@@ -36,10 +37,12 @@ export function CallRecordingPlayer({
   const containerRef = useRef<HTMLDivElement>(null)
   const fetchParams = useRef({ credentials: "include" as const }).current
   const [playbackRate, setPlaybackRate] = useState(1)
+  const [loadError, setLoadError] = useState<"missing" | "failed" | null>(null)
+  const url = `${env.API_URL}/api/calls/${callId}/recording`
 
   const { wavesurfer, isReady, isPlaying } = useWavesurfer({
     container: containerRef,
-    url: `${env.API_URL}/api/calls/${callId}/recording`,
+    url,
     fetchParams,
     height: 48,
     minPxPerSec: 50,
@@ -52,6 +55,20 @@ export function CallRecordingPlayer({
   })
 
   useEffect(() => {
+    if (!wavesurfer || isReady) return
+    let active = true
+    const unsubscribe = wavesurfer.on("error", () => {
+      void isRecordingMissing(url).then((missing) => {
+        if (active) setLoadError(missing ? "missing" : "failed")
+      })
+    })
+    return () => {
+      active = false
+      unsubscribe()
+    }
+  }, [wavesurfer, isReady, url])
+
+  useEffect(() => {
     if (!wavesurfer || !isReady || position == null) return
     const fileTime = Math.min(
       wavesurfer.getDuration(),
@@ -61,7 +78,7 @@ export function CallRecordingPlayer({
   }, [wavesurfer, isReady, position, recordingOffset])
 
   useEffect(() => {
-    if (!wavesurfer) return
+    if (!wavesurfer || loadError) return
 
     wavesurfer.registerPlugin(
       Timeline.create({
@@ -95,7 +112,7 @@ export function CallRecordingPlayer({
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [wavesurfer, recordingOffset])
+  }, [wavesurfer, recordingOffset, loadError])
 
   function onPlayPause() {
     void wavesurfer?.playPause()
@@ -119,8 +136,18 @@ export function CallRecordingPlayer({
     link.click()
   }
 
+  if (loadError === "missing") return null
+
+  if (loadError === "failed") {
+    return (
+      <p className="mt-2 text-sm text-muted-foreground">
+        {t("components.calls.call_recording_player.load_failed")}
+      </p>
+    )
+  }
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="mt-2 flex flex-col gap-2">
       <div className="flex items-center space-x-1.5">
         <Button
           type="button"

@@ -63,6 +63,16 @@
           "duplicate_key": "Duplicate variable key"
         }
       },
+      "call_recording": {
+        "disclosure": {
+          "required": "Recording disclosure cannot be empty"
+        },
+        "excluded_prefixes": {
+          "format": "Excluded prefixes must be a + followed by 1 to 14 digits",
+          "max": "Add at most 200 excluded prefixes",
+          "duplicate": "Duplicate excluded prefix"
+        }
+      },
       "transfer_call_destination": {
         "condition": {
           "required": "Condition is required"

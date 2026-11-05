@@ -105,13 +105,11 @@ function CallDetailBody({ callId }: { callId: string }) {
             })}
           </p>
         )}
-        <div className="mt-2">
-          <CallRecordingPlayer
-            callId={callId}
-            position={position}
-            recordingOffset={recordingOffset}
-          />
-        </div>
+        <CallRecordingPlayer
+          callId={callId}
+          position={position}
+          recordingOffset={recordingOffset}
+        />
       </SheetHeader>
 
       <Tabs

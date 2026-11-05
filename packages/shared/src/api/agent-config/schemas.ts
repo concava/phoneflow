@@ -143,6 +143,40 @@ export const backgroundAudioSchema = z
   })
   .strict()
 
+export const callRecordingSchema = z
+  .object({
+    enabled: z.boolean(),
+    disclosure: requiredString(
+      "schemas.agent_config.call_recording.disclosure.required"
+    ).exactOptional(),
+    excludedPrefixes: z
+      .array(
+        z
+          .string()
+          .regex(
+            /^\+[0-9]{1,14}$/,
+            "schemas.agent_config.call_recording.excluded_prefixes.format"
+          )
+      )
+      .max(200, "schemas.agent_config.call_recording.excluded_prefixes.max")
+      .exactOptional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    const prefixes = new Set<string>()
+    value.excludedPrefixes?.forEach((prefix, index) => {
+      if (prefixes.has(prefix)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["excludedPrefixes", index],
+          message:
+            "schemas.agent_config.call_recording.excluded_prefixes.duplicate",
+        })
+      }
+      prefixes.add(prefix)
+    })
+  })
+
 export const callSettingsSchema = z
   .object({
     maxDurationSec: z.number().int().positive(),
@@ -438,6 +472,7 @@ export const agentConfigSchema = z
     tts: ttsConfigSchema,
     turnHandling: turnHandlingConfigSchema,
     backgroundAudio: backgroundAudioSchema.exactOptional(),
+    recording: callRecordingSchema.exactOptional(),
     call: callSettingsSchema,
     globalPrompt: z.string(),
     timezone: z.string(),
@@ -622,6 +657,9 @@ export const agentConfigSchema = z
     })
 
     const texts = [config.globalPrompt]
+    if (config.recording?.disclosure) {
+      texts.push(config.recording.disclosure)
+    }
     const expressionKeys: string[] = []
     const webhookRequests: { parameters: string[]; texts: string[] }[] = []
 

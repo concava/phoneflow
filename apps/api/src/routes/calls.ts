@@ -37,6 +37,7 @@ import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { requireAuthToken } from "@/lib/auth/token"
 import { computeCallCosts } from "@/lib/call-cost"
+import { shouldRecordCall } from "@/lib/call-recording"
 import { recordContactCall, resolvePhoneContactId } from "@/lib/contacts"
 import {
   deductOrganizationCredits,
@@ -53,6 +54,7 @@ import {
   stopCallRecording,
 } from "@/lib/livekit"
 import { emailsQueue } from "@/lib/queues"
+import { privateS3Configured } from "@/lib/s3"
 import { validator } from "@/lib/validator"
 
 export const callRoutes = new Hono()
@@ -132,6 +134,22 @@ function sipConnection(phoneNumber: {
   }
 }
 
+async function startRecordingIfAllowed(
+  config: AgentConfig,
+  remoteNumber: string | null,
+  livekitRoomName: string,
+  callId: string
+) {
+  const recording =
+    privateS3Configured() && shouldRecordCall(config, remoteNumber)
+
+  if (recording) {
+    await startCallRecording(livekitRoomName, callId)
+  }
+
+  return recording
+}
+
 callRoutes.post(
   "/start/web",
   requireAuthToken,
@@ -174,13 +192,19 @@ callRoutes.post(
         })
         .returning({ id: callsTable.id })
 
-      await startCallRecording(payload.livekitRoomName, call.id)
+      const recording = await startRecordingIfAllowed(
+        resolved.config,
+        null,
+        payload.livekitRoomName,
+        call.id
+      )
 
       return c.json(
         {
           callId: call.id,
           config: resolved.config,
           sip: null,
+          recording,
         } satisfies StartCallResponse,
         201
       )
@@ -261,13 +285,19 @@ callRoutes.post(
         })
         .returning({ id: callsTable.id })
 
-      await startCallRecording(payload.livekitRoomName, call.id)
+      const recording = await startRecordingIfAllowed(
+        resolved.config,
+        payload.fromNumber,
+        payload.livekitRoomName,
+        call.id
+      )
 
       return c.json(
         {
           callId: call.id,
           config: resolved.config,
           sip: sipConnection(phoneNumber),
+          recording,
         } satisfies StartCallResponse,
         201
       )
@@ -343,13 +373,19 @@ callRoutes.post(
         })
         .returning({ id: callsTable.id })
 
-      await startCallRecording(payload.livekitRoomName, call.id)
+      const recording = await startRecordingIfAllowed(
+        resolved.config,
+        payload.toNumber,
+        payload.livekitRoomName,
+        call.id
+      )
 
       return c.json(
         {
           callId: call.id,
           config: resolved.config,
           sip: phoneNumber ? sipConnection(phoneNumber) : null,
+          recording,
         } satisfies StartCallResponse,
         201
       )
@@ -600,6 +636,10 @@ callRoutes.get("/:callId/recording", requireOrganization, async (c) => {
       return c.json({ error: t(locale, "calls.not_found") }, 404)
     }
 
+    if (!privateS3Configured()) {
+      return c.json({ error: t(locale, "calls.recording_not_found") }, 404)
+    }
+
     const recording = await getRecording(call.id)
 
     c.header("Content-Type", "audio/mp4")
@@ -608,7 +648,10 @@ callRoutes.get("/:callId/recording", requireOrganization, async (c) => {
       c.header("Content-Length", String(recording.ContentLength))
     }
     return c.body(recording.Body.transformToWebStream())
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === "NoSuchKey") {
+      return c.json({ error: t(locale, "calls.recording_not_found") }, 404)
+    }
     return c.json({ error: t(locale, "calls.load_recording_failed") }, 500)
   }
 })

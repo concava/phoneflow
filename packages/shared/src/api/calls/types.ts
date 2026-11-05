@@ -59,6 +59,7 @@ export type StartCallResponse = {
   callId: string
   config: AgentConfig
   sip: CallSipConnection | null
+  recording: boolean
 }
 
 export type UnansweredCallResponse = {

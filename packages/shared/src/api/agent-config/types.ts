@@ -4,6 +4,7 @@ import type {
   agentConfigSchema,
   agentToolSchema,
   backgroundAudioSchema,
+  callRecordingSchema,
   dynamicVariableSchema,
   endCallToolSchema,
   expressionConditionSchema,
@@ -27,6 +28,7 @@ export type ToolParameter = WebhookTool["parameters"][number]
 export type ToolKeyValue = WebhookTool["headers"][number]
 export type ResponseVariable = WebhookTool["responseVariables"][number]
 export type BackgroundAudio = z.infer<typeof backgroundAudioSchema>
+export type CallRecording = z.infer<typeof callRecordingSchema>
 export type FlowNodeInstructions = z.infer<typeof flowNodeInstructionsSchema>
 export type EndCallTool = z.infer<typeof endCallToolSchema>
 export type IvrNavigationTool = z.infer<typeof ivrNavigationToolSchema>
