@@ -28,6 +28,7 @@ import {
   loadEditorAgentConfig,
   validateAgentConfig,
 } from "@/components/flow/agent-config"
+import { fillFunctionEdgeVariables } from "@/stores/function-edges"
 
 export type FlowSidePanelState =
   | { kind: "closed" }
@@ -302,8 +303,16 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
       agent: state.agent,
     })),
   setNode: (node) =>
-    set((state) =>
-      commitEditorConfig(
+    set((state) => {
+      const previous = state.config.nodes.find((entry) => entry.id === node.id)
+      const tool =
+        node.type === "function" &&
+        previous?.type === "function" &&
+        node.data.toolId !== previous.data.toolId
+          ? state.config.tools.find((entry) => entry.id === node.data.toolId)
+          : undefined
+
+      return commitEditorConfig(
         state,
         applyFlowSelection(
           {
@@ -311,12 +320,19 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
             nodes: state.config.nodes.map((entry) =>
               entry.id === node.id ? node : entry
             ),
+            edges: tool
+              ? fillFunctionEdgeVariables(
+                  state.config.edges,
+                  node.id,
+                  functionNodeResultVariables(tool.name).ok
+                )
+              : state.config.edges,
           },
           { nodeId: node.id }
         ),
         { sidePanel: { kind: "node", node } }
       )
-    ),
+    }),
   setEdge: (edge) =>
     set((state) =>
       commitEditorConfig(
@@ -356,7 +372,22 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
         }
       })
 
-      return commitTools(state, [...state.config.tools, tool], nodes)
+      const isFunctionNode = state.config.nodes.some(
+        (node) => node.id === nodeId && node.type === "function"
+      )
+      const edges = isFunctionNode
+        ? fillFunctionEdgeVariables(
+            state.config.edges,
+            nodeId,
+            functionNodeResultVariables(tool.name).ok
+          )
+        : state.config.edges
+
+      return commitTools(
+        { ...state, config: { ...state.config, edges } },
+        [...state.config.tools, tool],
+        nodes
+      )
     }),
   editTool: (tool) =>
     set((state) =>
