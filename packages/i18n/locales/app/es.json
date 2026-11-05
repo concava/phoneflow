@@ -700,6 +700,15 @@
                 "low": "Bajo"
               }
             },
+            "pronunciations": {
+              "label": "Pronunciación",
+              "description": "Escribe cada palabra tal como debe sonar, por ejemplo «Xiaomi» como «Shaomi». Solo cambia la voz: la transcripción conserva la palabra original",
+              "term_placeholder": "Palabra o nombre",
+              "replacement_placeholder": "Se pronuncia como",
+              "case_sensitive": "Distinguir mayúsculas y minúsculas",
+              "remove": "Quitar palabra",
+              "add": "Añadir palabra"
+            },
             "interruptions": {
               "label": "Interrupciones",
               "description": "Detiene al agente cuando el usuario empieza a hablar"

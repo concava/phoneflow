@@ -1,4 +1,10 @@
-import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
+import { Plus, Trash2 } from "lucide-react"
+
+import { PRONUNCIATIONS_MAX } from "@workspace/shared/api/agent-config/schemas"
+import type {
+  AgentConfig,
+  Pronunciation,
+} from "@workspace/shared/api/agent-config/types"
 import {
   getTtsCapabilities,
   withTtsModel,
@@ -7,8 +13,15 @@ import {
 import { TTS_DEFAULTS } from "@workspace/shared/models/defaults"
 import { getModelLanguages, getVoices } from "@workspace/shared/models/helpers"
 import { withInterruptionEnabled } from "@workspace/shared/models/turn-handling"
-import { Field, FieldLabel } from "@workspace/ui/components/field"
+import { Button } from "@workspace/ui/components/button"
+import { Checkbox } from "@workspace/ui/components/checkbox"
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+} from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
 import { BackgroundAudioSelect } from "@/components/flow/sidepanel/background-audio-select"
 import {
   AdvancedFields,
@@ -33,6 +46,126 @@ function ttsValue<K extends keyof typeof TTS_DEFAULTS>(
 ) {
   const value = tts[key]
   return value === undefined ? TTS_DEFAULTS[key] : value
+}
+
+function PronunciationsField() {
+  const { t } = useTranslation()
+  const readOnly = useAgentStore((state) => state.readOnly)
+  const config = useAgentStore((state) => state.config)
+  const setConfig = useAgentStore((state) => state.setConfig)
+  const pronunciations = config.pronunciations ?? []
+
+  function setPronunciations(next: Pronunciation[]) {
+    if (next.length > 0) {
+      setConfig({ ...config, pronunciations: next })
+      return
+    }
+
+    const { pronunciations: _, ...rest } = config
+    setConfig(rest)
+  }
+
+  function updatePronunciation(index: number, patch: Partial<Pronunciation>) {
+    setPronunciations(
+      pronunciations.map((pronunciation, pronunciationIndex) =>
+        pronunciationIndex === index
+          ? { ...pronunciation, ...patch }
+          : pronunciation
+      )
+    )
+  }
+
+  return (
+    <Field>
+      <FieldLabel>
+        {t("components.flow.sidepanel.config.voice_tab.pronunciations.label")}
+      </FieldLabel>
+      <FieldDescription>
+        {t(
+          "components.flow.sidepanel.config.voice_tab.pronunciations.description"
+        )}
+      </FieldDescription>
+      {pronunciations.map((pronunciation, index) => (
+        <div
+          key={index}
+          className="flex flex-col gap-2 rounded-md border border-border p-3"
+        >
+          <div className="flex items-center gap-2">
+            <Input
+              value={pronunciation.term}
+              aria-label={t(
+                "components.flow.sidepanel.config.voice_tab.pronunciations.term_placeholder"
+              )}
+              placeholder={t(
+                "components.flow.sidepanel.config.voice_tab.pronunciations.term_placeholder"
+              )}
+              readOnly={readOnly}
+              onChange={(event) =>
+                updatePronunciation(index, { term: event.target.value })
+              }
+            />
+            <Button
+              variant="ghost"
+              className="text-destructive!"
+              size="icon-sm"
+              aria-label={t(
+                "components.flow.sidepanel.config.voice_tab.pronunciations.remove"
+              )}
+              disabled={readOnly}
+              onClick={() =>
+                setPronunciations(
+                  pronunciations.filter(
+                    (_, pronunciationIndex) => pronunciationIndex !== index
+                  )
+                )
+              }
+            >
+              <Trash2 />
+            </Button>
+          </div>
+          <Input
+            value={pronunciation.replacement}
+            aria-label={t(
+              "components.flow.sidepanel.config.voice_tab.pronunciations.replacement_placeholder"
+            )}
+            placeholder={t(
+              "components.flow.sidepanel.config.voice_tab.pronunciations.replacement_placeholder"
+            )}
+            readOnly={readOnly}
+            onChange={(event) =>
+              updatePronunciation(index, { replacement: event.target.value })
+            }
+          />
+          <Label className="font-normal">
+            <Checkbox
+              checked={pronunciation.caseSensitive}
+              disabled={readOnly}
+              onCheckedChange={(caseSensitive) =>
+                updatePronunciation(index, { caseSensitive })
+              }
+            />
+            {t(
+              "components.flow.sidepanel.config.voice_tab.pronunciations.case_sensitive"
+            )}
+          </Label>
+        </div>
+      ))}
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={readOnly || pronunciations.length >= PRONUNCIATIONS_MAX}
+        onClick={() =>
+          setPronunciations([
+            ...pronunciations,
+            { term: "", replacement: "", caseSensitive: false },
+          ])
+        }
+      >
+        <Plus />
+        {t("components.flow.sidepanel.config.voice_tab.pronunciations.add")}
+      </Button>
+    </Field>
+  )
 }
 
 export function VoiceTab() {
@@ -198,6 +331,8 @@ export function VoiceTab() {
           setInterruption(withInterruptionEnabled(enabled))
         }
       />
+
+      <PronunciationsField />
 
       <AdvancedFields>
         {interruption.enabled ? (

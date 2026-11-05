@@ -37,6 +37,18 @@
           "empty": "Emotion cannot be empty"
         }
       },
+      "pronunciation": {
+        "term": {
+          "required": "Pronunciation word is required"
+        },
+        "replacement": {
+          "required": "How to say the word is required"
+        }
+      },
+      "pronunciations": {
+        "max": "Add at most 100 pronunciations",
+        "duplicate_term": "Duplicate pronunciation word"
+      },
       "flow_node_instructions": {
         "text": {
           "required": "Conversation instructions are required"

@@ -13,6 +13,7 @@ import * as silero from "@livekit/agents-plugin-silero"
 import { BACKGROUND_AUDIO } from "@workspace/shared/constants/background-audio"
 import { FlowAgent } from "@/flow/agent"
 import { buildFlowGraph } from "@/flow/builder"
+import { pronunciationSessionOptions } from "@/flow/pronunciation"
 import { createVariables } from "@/flow/variables"
 import {
   completeCall,
@@ -93,6 +94,7 @@ export default defineAgent({
       stt: STT(config.stt),
       llm: LLM(config.llm),
       tts: TTS(config.tts),
+      ...pronunciationSessionOptions(config.pronunciations),
       userAwayTimeout: config.call.idleTimeoutSec,
       turnHandling: {
         turnDetection: turn.turnDetection,

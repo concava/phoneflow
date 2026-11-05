@@ -143,6 +143,40 @@ export const backgroundAudioSchema = z
   })
   .strict()
 
+export const PRONUNCIATIONS_MAX = 100
+
+export const pronunciationSchema = z
+  .object({
+    term: requiredString("schemas.agent_config.pronunciation.term.required"),
+    replacement: requiredString(
+      "schemas.agent_config.pronunciation.replacement.required"
+    ),
+    caseSensitive: z.boolean(),
+  })
+  .strict()
+
+export const pronunciationsSchema = z
+  .array(pronunciationSchema)
+  .max(PRONUNCIATIONS_MAX, "schemas.agent_config.pronunciations.max")
+  .superRefine((pronunciations, ctx) => {
+    pronunciations.forEach((pronunciation, index) => {
+      const term = pronunciation.term.normalize("NFC")
+      const duplicate = pronunciations.slice(0, index).some((earlier) => {
+        const earlierTerm = earlier.term.normalize("NFC")
+        return pronunciation.caseSensitive && earlier.caseSensitive
+          ? earlierTerm === term
+          : earlierTerm.toLowerCase() === term.toLowerCase()
+      })
+      if (duplicate) {
+        ctx.addIssue({
+          code: "custom",
+          path: [index, "term"],
+          message: "schemas.agent_config.pronunciations.duplicate_term",
+        })
+      }
+    })
+  })
+
 export const callSettingsSchema = z
   .object({
     maxDurationSec: z.number().int().positive(),
@@ -438,6 +472,7 @@ export const agentConfigSchema = z
     tts: ttsConfigSchema,
     turnHandling: turnHandlingConfigSchema,
     backgroundAudio: backgroundAudioSchema.exactOptional(),
+    pronunciations: pronunciationsSchema.exactOptional(),
     call: callSettingsSchema,
     globalPrompt: z.string(),
     timezone: z.string(),

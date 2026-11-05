@@ -37,6 +37,18 @@
           "empty": "La emoción no puede estar vacía"
         }
       },
+      "pronunciation": {
+        "term": {
+          "required": "La palabra de la pronunciación es obligatoria"
+        },
+        "replacement": {
+          "required": "Indica cómo se pronuncia la palabra"
+        }
+      },
+      "pronunciations": {
+        "max": "Añade 100 pronunciaciones como máximo",
+        "duplicate_term": "Palabra de pronunciación duplicada"
+      },
       "flow_node_instructions": {
         "text": {
           "required": "Las instrucciones de conversación son obligatorias"
