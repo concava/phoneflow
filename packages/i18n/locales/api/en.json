@@ -32,6 +32,27 @@
     "scheduled_at_in_past": "Scheduled time must be in the future",
     "create_failed": "Failed to create batch call"
   },
+  "evaluations": {
+    "list_failed": "Failed to load evaluation suites",
+    "load_failed": "Failed to load evaluation suite",
+    "create_failed": "Failed to create evaluation suite",
+    "update_failed": "Failed to update evaluation suite",
+    "delete_failed": "Failed to delete evaluation suite",
+    "suite_not_found": "Evaluation suite not found",
+    "agent_not_found": "Agent not found",
+    "agent_version_not_found": "Agent version not found",
+    "llm_not_configured": "Evaluations are not configured on this server. Set POST_CALL_LLM_BASE_URL, POST_CALL_LLM_API_KEY and POST_CALL_LLM_MODEL.",
+    "no_matching_calls": "No completed calls with a transcript match these filters",
+    "start_run_failed": "Failed to start evaluation run",
+    "list_runs_failed": "Failed to load evaluation runs",
+    "load_run_failed": "Failed to load evaluation run",
+    "run_not_found": "Evaluation run not found",
+    "list_results_failed": "Failed to load evaluation results",
+    "run_not_active": "This run is no longer active",
+    "cancel_failed": "Failed to cancel evaluation run",
+    "nothing_to_rejudge": "There are no results to re-judge",
+    "rejudge_failed": "Failed to re-judge results"
+  },
   "billing": {
     "load_failed": "Failed to load billing",
     "list_invoices_failed": "Failed to load invoices",

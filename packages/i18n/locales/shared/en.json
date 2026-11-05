@@ -190,6 +190,41 @@
           "required_with_username": "SIP password is required when a username is set"
         }
       }
+    },
+    "evaluations": {
+      "suite_name": {
+        "required": "Suite name is required",
+        "max": "Suite name must be at most 255 characters"
+      },
+      "agent": {
+        "required": "Select an agent"
+      },
+      "criteria": {
+        "required": "Add at least one criterion",
+        "max": "A suite can have at most 20 criteria",
+        "duplicate": "Criteria must be unique"
+      },
+      "criterion_name": {
+        "required": "Criterion name is required",
+        "max": "Criterion name must be at most 120 characters"
+      },
+      "criterion_description": {
+        "required": "Criterion description is required",
+        "max": "Criterion description must be at most 2000 characters"
+      },
+      "limit": {
+        "range": "Enter a number of calls between 1 and 200"
+      },
+      "date_range": {
+        "invalid": "The start date must be before the end date",
+        "invalid_date": "Enter a valid date"
+      },
+      "agent_version": {
+        "invalid": "Select a valid agent version"
+      },
+      "result_ids": {
+        "invalid": "Select between 1 and 200 valid results"
+      }
     }
   }
 }

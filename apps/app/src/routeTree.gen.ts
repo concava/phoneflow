@@ -31,16 +31,19 @@ import { Route as authorizedorganizationsidebarAgentsPageRouteImport } from './r
 import { Route as authorizedorganizationsidebarBatchCallsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/batch-calls/page'
 import { Route as authorizedorganizationsidebarCallsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/calls/page'
 import { Route as authorizedorganizationsidebarContactsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/contacts/page'
+import { Route as authorizedorganizationsidebarEvaluationsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/evaluations/page'
 import { Route as authorizedorganizationsidebarPhoneNumbersPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/phone-numbers/page'
 import { Route as authorizedorganizationsidebarSettingsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/page'
 import { Route as authorizedorganizationsidebarAgentsAgentIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/agents/$agentId/page'
 import { Route as authorizedorganizationsidebarBatchCallsCreatePageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/batch-calls/create/page'
+import { Route as authorizedorganizationsidebarEvaluationsSuiteIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/evaluations/$suiteId/page'
 import { Route as authorizedorganizationsidebarSettingsAccountPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/account/page'
 import { Route as authorizedorganizationsidebarSettingsBillingPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/billing/page'
 import { Route as authorizedorganizationsidebarSettingsMembersPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/members/page'
 import { Route as authorizedorganizationsidebarSettingsOrganizationPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/organization/page'
 import { Route as authorizedorganizationsidebarSettingsRolesPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/roles/page'
 import { Route as authorizedorganizationsidebarSettingsSsoPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/sso/page'
+import { Route as authorizedorganizationsidebarEvaluationsRunsRunIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/evaluations/runs/$runId/page'
 
 const authorizedLayoutRoute = authorizedLayoutRouteImport.update({
   id: '/(authorized)',
@@ -166,6 +169,12 @@ const authorizedorganizationsidebarContactsPageRoute =
     path: '/contacts/',
     getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
+const authorizedorganizationsidebarEvaluationsPageRoute =
+  authorizedorganizationsidebarEvaluationsPageRouteImport.update({
+    id: '/evaluations/',
+    path: '/evaluations/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 const authorizedorganizationsidebarPhoneNumbersPageRoute =
   authorizedorganizationsidebarPhoneNumbersPageRouteImport.update({
     id: '/phone-numbers/',
@@ -188,6 +197,12 @@ const authorizedorganizationsidebarBatchCallsCreatePageRoute =
   authorizedorganizationsidebarBatchCallsCreatePageRouteImport.update({
     id: '/batch-calls/create/',
     path: '/batch-calls/create/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
+const authorizedorganizationsidebarEvaluationsSuiteIdPageRoute =
+  authorizedorganizationsidebarEvaluationsSuiteIdPageRouteImport.update({
+    id: '/evaluations/$suiteId/',
+    path: '/evaluations/$suiteId/',
     getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
 const authorizedorganizationsidebarSettingsAccountPageRoute =
@@ -226,6 +241,12 @@ const authorizedorganizationsidebarSettingsSsoPageRoute =
     path: '/sso/',
     getParentRoute: () => authorizedorganizationsidebarSettingsLayoutRoute,
   } as any)
+const authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute =
+  authorizedorganizationsidebarEvaluationsRunsRunIdPageRouteImport.update({
+    id: '/evaluations/runs/$runId/',
+    path: '/evaluations/runs/$runId/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/create-organization/': typeof authorizedCreateOrganizationPageRoute
@@ -246,16 +267,19 @@ export interface FileRoutesByFullPath {
   '/batch-calls/': typeof authorizedorganizationsidebarBatchCallsPageRoute
   '/calls/': typeof authorizedorganizationsidebarCallsPageRoute
   '/contacts/': typeof authorizedorganizationsidebarContactsPageRoute
+  '/evaluations/': typeof authorizedorganizationsidebarEvaluationsPageRoute
   '/phone-numbers/': typeof authorizedorganizationsidebarPhoneNumbersPageRoute
   '/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
   '/agents/$agentId/': typeof authorizedorganizationsidebarAgentsAgentIdPageRoute
   '/batch-calls/create/': typeof authorizedorganizationsidebarBatchCallsCreatePageRoute
+  '/evaluations/$suiteId/': typeof authorizedorganizationsidebarEvaluationsSuiteIdPageRoute
   '/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/billing/': typeof authorizedorganizationsidebarSettingsBillingPageRoute
   '/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/settings/roles/': typeof authorizedorganizationsidebarSettingsRolesPageRoute
   '/settings/sso/': typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  '/evaluations/runs/$runId/': typeof authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute
 }
 export interface FileRoutesByTo {
   '/create-organization': typeof authorizedCreateOrganizationPageRoute
@@ -275,16 +299,19 @@ export interface FileRoutesByTo {
   '/batch-calls': typeof authorizedorganizationsidebarBatchCallsPageRoute
   '/calls': typeof authorizedorganizationsidebarCallsPageRoute
   '/contacts': typeof authorizedorganizationsidebarContactsPageRoute
+  '/evaluations': typeof authorizedorganizationsidebarEvaluationsPageRoute
   '/phone-numbers': typeof authorizedorganizationsidebarPhoneNumbersPageRoute
   '/settings': typeof authorizedorganizationsidebarSettingsPageRoute
   '/agents/$agentId': typeof authorizedorganizationsidebarAgentsAgentIdPageRoute
   '/batch-calls/create': typeof authorizedorganizationsidebarBatchCallsCreatePageRoute
+  '/evaluations/$suiteId': typeof authorizedorganizationsidebarEvaluationsSuiteIdPageRoute
   '/settings/account': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/billing': typeof authorizedorganizationsidebarSettingsBillingPageRoute
   '/settings/members': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/settings/organization': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/settings/roles': typeof authorizedorganizationsidebarSettingsRolesPageRoute
   '/settings/sso': typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  '/evaluations/runs/$runId': typeof authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -310,16 +337,19 @@ export interface FileRoutesById {
   '/(authorized)/(organization)/(sidebar)/batch-calls/': typeof authorizedorganizationsidebarBatchCallsPageRoute
   '/(authorized)/(organization)/(sidebar)/calls/': typeof authorizedorganizationsidebarCallsPageRoute
   '/(authorized)/(organization)/(sidebar)/contacts/': typeof authorizedorganizationsidebarContactsPageRoute
+  '/(authorized)/(organization)/(sidebar)/evaluations/': typeof authorizedorganizationsidebarEvaluationsPageRoute
   '/(authorized)/(organization)/(sidebar)/phone-numbers/': typeof authorizedorganizationsidebarPhoneNumbersPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
   '/(authorized)/(organization)/(sidebar)/agents/$agentId/': typeof authorizedorganizationsidebarAgentsAgentIdPageRoute
   '/(authorized)/(organization)/(sidebar)/batch-calls/create/': typeof authorizedorganizationsidebarBatchCallsCreatePageRoute
+  '/(authorized)/(organization)/(sidebar)/evaluations/$suiteId/': typeof authorizedorganizationsidebarEvaluationsSuiteIdPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/billing/': typeof authorizedorganizationsidebarSettingsBillingPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/roles/': typeof authorizedorganizationsidebarSettingsRolesPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/sso/': typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  '/(authorized)/(organization)/(sidebar)/evaluations/runs/$runId/': typeof authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -342,16 +372,19 @@ export interface FileRouteTypes {
     | '/batch-calls/'
     | '/calls/'
     | '/contacts/'
+    | '/evaluations/'
     | '/phone-numbers/'
     | '/settings/'
     | '/agents/$agentId/'
     | '/batch-calls/create/'
+    | '/evaluations/$suiteId/'
     | '/settings/account/'
     | '/settings/billing/'
     | '/settings/members/'
     | '/settings/organization/'
     | '/settings/roles/'
     | '/settings/sso/'
+    | '/evaluations/runs/$runId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/create-organization'
@@ -371,16 +404,19 @@ export interface FileRouteTypes {
     | '/batch-calls'
     | '/calls'
     | '/contacts'
+    | '/evaluations'
     | '/phone-numbers'
     | '/settings'
     | '/agents/$agentId'
     | '/batch-calls/create'
+    | '/evaluations/$suiteId'
     | '/settings/account'
     | '/settings/billing'
     | '/settings/members'
     | '/settings/organization'
     | '/settings/roles'
     | '/settings/sso'
+    | '/evaluations/runs/$runId'
   id:
     | '__root__'
     | '/(authorized)'
@@ -405,16 +441,19 @@ export interface FileRouteTypes {
     | '/(authorized)/(organization)/(sidebar)/batch-calls/'
     | '/(authorized)/(organization)/(sidebar)/calls/'
     | '/(authorized)/(organization)/(sidebar)/contacts/'
+    | '/(authorized)/(organization)/(sidebar)/evaluations/'
     | '/(authorized)/(organization)/(sidebar)/phone-numbers/'
     | '/(authorized)/(organization)/(sidebar)/settings/'
     | '/(authorized)/(organization)/(sidebar)/agents/$agentId/'
     | '/(authorized)/(organization)/(sidebar)/batch-calls/create/'
+    | '/(authorized)/(organization)/(sidebar)/evaluations/$suiteId/'
     | '/(authorized)/(organization)/(sidebar)/settings/account/'
     | '/(authorized)/(organization)/(sidebar)/settings/billing/'
     | '/(authorized)/(organization)/(sidebar)/settings/members/'
     | '/(authorized)/(organization)/(sidebar)/settings/organization/'
     | '/(authorized)/(organization)/(sidebar)/settings/roles/'
     | '/(authorized)/(organization)/(sidebar)/settings/sso/'
+    | '/(authorized)/(organization)/(sidebar)/evaluations/runs/$runId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -578,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authorizedorganizationsidebarContactsPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
+    '/(authorized)/(organization)/(sidebar)/evaluations/': {
+      id: '/(authorized)/(organization)/(sidebar)/evaluations/'
+      path: '/evaluations'
+      fullPath: '/evaluations/'
+      preLoaderRoute: typeof authorizedorganizationsidebarEvaluationsPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
     '/(authorized)/(organization)/(sidebar)/phone-numbers/': {
       id: '/(authorized)/(organization)/(sidebar)/phone-numbers/'
       path: '/phone-numbers'
@@ -604,6 +650,13 @@ declare module '@tanstack/react-router' {
       path: '/batch-calls/create'
       fullPath: '/batch-calls/create/'
       preLoaderRoute: typeof authorizedorganizationsidebarBatchCallsCreatePageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
+    '/(authorized)/(organization)/(sidebar)/evaluations/$suiteId/': {
+      id: '/(authorized)/(organization)/(sidebar)/evaluations/$suiteId/'
+      path: '/evaluations/$suiteId'
+      fullPath: '/evaluations/$suiteId/'
+      preLoaderRoute: typeof authorizedorganizationsidebarEvaluationsSuiteIdPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
     '/(authorized)/(organization)/(sidebar)/settings/account/': {
@@ -647,6 +700,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/sso/'
       preLoaderRoute: typeof authorizedorganizationsidebarSettingsSsoPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarSettingsLayoutRoute
+    }
+    '/(authorized)/(organization)/(sidebar)/evaluations/runs/$runId/': {
+      id: '/(authorized)/(organization)/(sidebar)/evaluations/runs/$runId/'
+      path: '/evaluations/runs/$runId'
+      fullPath: '/evaluations/runs/$runId/'
+      preLoaderRoute: typeof authorizedorganizationsidebarEvaluationsRunsRunIdPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
   }
 }
@@ -692,9 +752,12 @@ interface authorizedorganizationsidebarLayoutRouteChildren {
   authorizedorganizationsidebarBatchCallsPageRoute: typeof authorizedorganizationsidebarBatchCallsPageRoute
   authorizedorganizationsidebarCallsPageRoute: typeof authorizedorganizationsidebarCallsPageRoute
   authorizedorganizationsidebarContactsPageRoute: typeof authorizedorganizationsidebarContactsPageRoute
+  authorizedorganizationsidebarEvaluationsPageRoute: typeof authorizedorganizationsidebarEvaluationsPageRoute
   authorizedorganizationsidebarPhoneNumbersPageRoute: typeof authorizedorganizationsidebarPhoneNumbersPageRoute
   authorizedorganizationsidebarAgentsAgentIdPageRoute: typeof authorizedorganizationsidebarAgentsAgentIdPageRoute
   authorizedorganizationsidebarBatchCallsCreatePageRoute: typeof authorizedorganizationsidebarBatchCallsCreatePageRoute
+  authorizedorganizationsidebarEvaluationsSuiteIdPageRoute: typeof authorizedorganizationsidebarEvaluationsSuiteIdPageRoute
+  authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute: typeof authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute
 }
 
 const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsidebarLayoutRouteChildren =
@@ -713,12 +776,18 @@ const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsi
       authorizedorganizationsidebarCallsPageRoute,
     authorizedorganizationsidebarContactsPageRoute:
       authorizedorganizationsidebarContactsPageRoute,
+    authorizedorganizationsidebarEvaluationsPageRoute:
+      authorizedorganizationsidebarEvaluationsPageRoute,
     authorizedorganizationsidebarPhoneNumbersPageRoute:
       authorizedorganizationsidebarPhoneNumbersPageRoute,
     authorizedorganizationsidebarAgentsAgentIdPageRoute:
       authorizedorganizationsidebarAgentsAgentIdPageRoute,
     authorizedorganizationsidebarBatchCallsCreatePageRoute:
       authorizedorganizationsidebarBatchCallsCreatePageRoute,
+    authorizedorganizationsidebarEvaluationsSuiteIdPageRoute:
+      authorizedorganizationsidebarEvaluationsSuiteIdPageRoute,
+    authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute:
+      authorizedorganizationsidebarEvaluationsRunsRunIdPageRoute,
   }
 
 const authorizedorganizationsidebarLayoutRouteWithChildren =

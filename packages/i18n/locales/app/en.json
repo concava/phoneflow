@@ -67,6 +67,39 @@
       "breadcrumb": "Create",
       "page_title": "Create batch call - Phoneflow"
     },
+    "evaluations": {
+      "page_title": "Evaluations - Phoneflow",
+      "breadcrumb": "Evaluations",
+      "create_suite": "Create suite"
+    },
+    "evaluations_suite": {
+      "page_title": "{{name}} - Evaluations - Phoneflow",
+      "start_run": "Start run",
+      "criteria": "Criteria",
+      "runs": "Runs"
+    },
+    "evaluations_run": {
+      "page_title": "Evaluation run - Phoneflow",
+      "cancel": "Cancel run",
+      "pass_rate_per_criterion": "Pass rate per criterion",
+      "compare_placeholder": "Compare with another run",
+      "compare_none": "No comparison",
+      "compare_note": "Each run judged its own set of calls, so a difference can come from the calls as well as from the agent.",
+      "toasts": {
+        "cancelled": "Run cancelled"
+      },
+      "stats": {
+        "status": "Status",
+        "agent": "Agent",
+        "version": "Version",
+        "period": "Calls from",
+        "all_dates": "All dates",
+        "judged": "Calls judged",
+        "errors_one": "{{count}} error",
+        "errors_other": "{{count}} errors",
+        "pass_rate": "Calls passing all criteria"
+      }
+    },
     "phone_numbers": {
       "page_title": "Phone numbers - Phoneflow",
       "breadcrumb": "Phone numbers"
@@ -1104,6 +1137,136 @@
         "submit": "Create batch call"
       }
     },
+    "evaluations": {
+      "helpers": {
+        "all_versions": "All versions"
+      },
+      "run_status": {
+        "pending": "Pending",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "suites_data_table": {
+        "no_runs": "No runs yet",
+        "columns": {
+          "name": "Name",
+          "agent": "Agent",
+          "criteria": "Criteria",
+          "last_run": "Last run",
+          "updated": "Updated"
+        }
+      },
+      "runs_data_table": {
+        "columns": {
+          "started": "Started",
+          "status": "Status",
+          "version": "Version",
+          "calls": "Calls judged",
+          "pass_rate": "Pass rate",
+          "errors": "Errors"
+        }
+      },
+      "suite_editor_dialog": {
+        "create_title": "Create evaluation suite",
+        "edit_title": "Edit evaluation suite",
+        "name": {
+          "label": "Name",
+          "placeholder": "Customer support quality"
+        },
+        "agent": {
+          "label": "Agent",
+          "placeholder": "Select an agent",
+          "locked": "The agent cannot be changed after the suite is created."
+        },
+        "criteria": {
+          "label": "Criteria",
+          "description": "Each criterion is judged on every call transcript. Editing them does not change past runs.",
+          "name_label": "Criterion name",
+          "name_placeholder": "Confirms the appointment",
+          "description_label": "Criterion description",
+          "description_placeholder": "The agent repeats the date and time back to the caller and asks them to confirm.",
+          "remove": "Remove criterion",
+          "add": "Add criterion"
+        },
+        "toasts": {
+          "created": "Evaluation suite created",
+          "updated": "Evaluation suite updated"
+        }
+      },
+      "delete_suite_dialog": {
+        "title": "Delete evaluation suite",
+        "description": "This deletes \"{{name}}\" and all its runs and results. This cannot be undone.",
+        "toasts": {
+          "deleted": "\"{{name}}\" deleted"
+        }
+      },
+      "start_run_dialog": {
+        "title": "Start evaluation run",
+        "description": "An LLM judges the criteria of this suite on completed calls that have a transcript, most recent first.",
+        "submit": "Start run",
+        "version": {
+          "label": "Agent version"
+        },
+        "dates": {
+          "label": "Call dates"
+        },
+        "limit": {
+          "label": "Maximum calls",
+          "description": "Between 1 and 200."
+        },
+        "toasts": {
+          "started": "Evaluation run started"
+        }
+      },
+      "criteria_pass_rates": {
+        "only_in_baseline": "Only in the compared run",
+        "columns": {
+          "criterion": "Criterion",
+          "pass_rate": "Pass rate",
+          "baseline": "Compared run",
+          "delta": "Difference (points)",
+          "passed": "Passed",
+          "failed": "Failed",
+          "not_applicable": "Not applicable"
+        }
+      },
+      "results_table": {
+        "title": "Calls",
+        "waiting": "Waiting to be judged.",
+        "deleted_call": "Deleted call",
+        "select_all": "Select all results",
+        "select_result": "Select result",
+        "rejudge_selected": "Re-judge selected ({{count}})",
+        "rejudge_failed": "Re-judge failed",
+        "toasts": {
+          "rejudging_one": "Re-judging {{count}} call",
+          "rejudging_other": "Re-judging {{count}} calls"
+        },
+        "outcome": {
+          "pending": "Pending",
+          "error": "Error",
+          "passed": "Passed",
+          "failed": "Failed",
+          "inconclusive": "Inconclusive"
+        },
+        "columns": {
+          "call": "Call",
+          "version": "Version",
+          "outcome": "Outcome",
+          "verdicts": "Verdicts"
+        },
+        "errors": {
+          "llm_not_configured": "Evaluations are not configured on the worker.",
+          "llm_failed": "The LLM request failed. You can re-judge this call.",
+          "invalid_output": "The LLM returned an invalid answer. You can re-judge this call.",
+          "call_unavailable": "The call or its transcript is no longer available.",
+          "cancelled": "The run was cancelled before this call was judged.",
+          "enqueue_failed": "This call could not be queued. You can re-judge it."
+        }
+      }
+    },
     "billing": {
       "add_credits_button": {
         "title": "Add credits",
@@ -1831,7 +1994,8 @@
             "agent": "Agents",
             "phone_number": "Phone numbers",
             "calls": "Calls",
-            "billing": "Billing"
+            "billing": "Billing",
+            "evaluation": "Evaluations"
           },
           "actions": {
             "create": "create",
@@ -1839,7 +2003,8 @@
             "update": "update",
             "delete": "delete",
             "cancel": "cancel",
-            "purchase": "purchase"
+            "purchase": "purchase",
+            "run": "run"
           },
           "toasts": {
             "updated": "{{name}} updated",
@@ -1901,6 +2066,7 @@
           "batch_calls": "Batch calls",
           "calls": "Calls",
           "contacts": "Contacts",
+          "evaluations": "Evaluations",
           "settings": "Settings"
         }
       },

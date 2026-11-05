@@ -39,6 +39,7 @@ const resourceLabels = {
   phoneNumber: "components.settings.roles.role_dialog.resources.phone_number",
   calls: "components.settings.roles.role_dialog.resources.calls",
   billing: "components.settings.roles.role_dialog.resources.billing",
+  evaluation: "components.settings.roles.role_dialog.resources.evaluation",
 } satisfies Record<string, string>
 
 const actionLabels = {
@@ -48,6 +49,7 @@ const actionLabels = {
   delete: "components.settings.roles.role_dialog.actions.delete",
   cancel: "components.settings.roles.role_dialog.actions.cancel",
   purchase: "components.settings.roles.role_dialog.actions.purchase",
+  run: "components.settings.roles.role_dialog.actions.run",
 } satisfies Record<string, string>
 
 export function usePermissionLabels() {

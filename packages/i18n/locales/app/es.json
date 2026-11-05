@@ -67,6 +67,39 @@
       "breadcrumb": "Crear",
       "page_title": "Crear llamada por lotes - Phoneflow"
     },
+    "evaluations": {
+      "page_title": "Evaluaciones - Phoneflow",
+      "breadcrumb": "Evaluaciones",
+      "create_suite": "Crear suite"
+    },
+    "evaluations_suite": {
+      "page_title": "{{name}} - Evaluaciones - Phoneflow",
+      "start_run": "Iniciar ejecución",
+      "criteria": "Criterios",
+      "runs": "Ejecuciones"
+    },
+    "evaluations_run": {
+      "page_title": "Ejecución de evaluación - Phoneflow",
+      "cancel": "Cancelar ejecución",
+      "pass_rate_per_criterion": "Tasa de aprobación por criterio",
+      "compare_placeholder": "Comparar con otra ejecución",
+      "compare_none": "Sin comparación",
+      "compare_note": "Cada ejecución ha juzgado su propio conjunto de llamadas, así que una diferencia puede deberse tanto a las llamadas como al agente.",
+      "toasts": {
+        "cancelled": "Ejecución cancelada"
+      },
+      "stats": {
+        "status": "Estado",
+        "agent": "Agente",
+        "version": "Versión",
+        "period": "Llamadas de",
+        "all_dates": "Todas las fechas",
+        "judged": "Llamadas juzgadas",
+        "errors_one": "{{count}} error",
+        "errors_other": "{{count}} errores",
+        "pass_rate": "Llamadas que cumplen todos los criterios"
+      }
+    },
     "phone_numbers": {
       "page_title": "Números de teléfono - Phoneflow",
       "breadcrumb": "Números de teléfono"
@@ -1104,6 +1137,136 @@
         "submit": "Crear llamada por lotes"
       }
     },
+    "evaluations": {
+      "helpers": {
+        "all_versions": "Todas las versiones"
+      },
+      "run_status": {
+        "pending": "Pendiente",
+        "running": "En curso",
+        "completed": "Completada",
+        "failed": "Fallida",
+        "cancelled": "Cancelada"
+      },
+      "suites_data_table": {
+        "no_runs": "Sin ejecuciones",
+        "columns": {
+          "name": "Nombre",
+          "agent": "Agente",
+          "criteria": "Criterios",
+          "last_run": "Última ejecución",
+          "updated": "Actualizada"
+        }
+      },
+      "runs_data_table": {
+        "columns": {
+          "started": "Inicio",
+          "status": "Estado",
+          "version": "Versión",
+          "calls": "Llamadas juzgadas",
+          "pass_rate": "Tasa de aprobación",
+          "errors": "Errores"
+        }
+      },
+      "suite_editor_dialog": {
+        "create_title": "Crear suite de evaluación",
+        "edit_title": "Editar suite de evaluación",
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Calidad de atención al cliente"
+        },
+        "agent": {
+          "label": "Agente",
+          "placeholder": "Selecciona un agente",
+          "locked": "El agente no se puede cambiar una vez creada la suite."
+        },
+        "criteria": {
+          "label": "Criterios",
+          "description": "Cada criterio se juzga en la transcripción de cada llamada. Editarlos no cambia las ejecuciones anteriores.",
+          "name_label": "Nombre del criterio",
+          "name_placeholder": "Confirma la cita",
+          "description_label": "Descripción del criterio",
+          "description_placeholder": "El agente repite la fecha y la hora a quien llama y le pide que las confirme.",
+          "remove": "Quitar criterio",
+          "add": "Añadir criterio"
+        },
+        "toasts": {
+          "created": "Suite de evaluación creada",
+          "updated": "Suite de evaluación actualizada"
+        }
+      },
+      "delete_suite_dialog": {
+        "title": "Eliminar suite de evaluación",
+        "description": "Se eliminarán \"{{name}}\" y todas sus ejecuciones y resultados. Esta acción no se puede deshacer.",
+        "toasts": {
+          "deleted": "\"{{name}}\" eliminada"
+        }
+      },
+      "start_run_dialog": {
+        "title": "Iniciar ejecución de evaluación",
+        "description": "Un LLM juzga los criterios de esta suite en las llamadas completadas que tienen transcripción, empezando por las más recientes.",
+        "submit": "Iniciar ejecución",
+        "version": {
+          "label": "Versión del agente"
+        },
+        "dates": {
+          "label": "Fechas de las llamadas"
+        },
+        "limit": {
+          "label": "Máximo de llamadas",
+          "description": "Entre 1 y 200."
+        },
+        "toasts": {
+          "started": "Ejecución de evaluación iniciada"
+        }
+      },
+      "criteria_pass_rates": {
+        "only_in_baseline": "Solo en la ejecución comparada",
+        "columns": {
+          "criterion": "Criterio",
+          "pass_rate": "Tasa de aprobación",
+          "baseline": "Ejecución comparada",
+          "delta": "Diferencia (puntos)",
+          "passed": "Cumple",
+          "failed": "No cumple",
+          "not_applicable": "No aplica"
+        }
+      },
+      "results_table": {
+        "title": "Llamadas",
+        "waiting": "Pendiente de juzgar.",
+        "deleted_call": "Llamada eliminada",
+        "select_all": "Seleccionar todos los resultados",
+        "select_result": "Seleccionar resultado",
+        "rejudge_selected": "Volver a juzgar selección ({{count}})",
+        "rejudge_failed": "Volver a juzgar fallidos",
+        "toasts": {
+          "rejudging_one": "Volviendo a juzgar {{count}} llamada",
+          "rejudging_other": "Volviendo a juzgar {{count}} llamadas"
+        },
+        "outcome": {
+          "pending": "Pendiente",
+          "error": "Error",
+          "passed": "Cumple",
+          "failed": "No cumple",
+          "inconclusive": "No concluyente"
+        },
+        "columns": {
+          "call": "Llamada",
+          "version": "Versión",
+          "outcome": "Resultado",
+          "verdicts": "Veredictos"
+        },
+        "errors": {
+          "llm_not_configured": "Las evaluaciones no están configuradas en el worker.",
+          "llm_failed": "La petición al LLM ha fallado. Puedes volver a juzgar esta llamada.",
+          "invalid_output": "El LLM ha devuelto una respuesta no válida. Puedes volver a juzgar esta llamada.",
+          "call_unavailable": "La llamada o su transcripción ya no están disponibles.",
+          "cancelled": "La ejecución se canceló antes de juzgar esta llamada.",
+          "enqueue_failed": "Esta llamada no se ha podido poner en cola. Puedes volver a juzgarla."
+        }
+      }
+    },
     "billing": {
       "add_credits_button": {
         "title": "Añadir créditos",
@@ -1831,7 +1994,8 @@
             "agent": "Agentes",
             "phone_number": "Números de teléfono",
             "calls": "Llamadas",
-            "billing": "Facturación"
+            "billing": "Facturación",
+            "evaluation": "Evaluaciones"
           },
           "actions": {
             "create": "crear",
@@ -1839,7 +2003,8 @@
             "update": "editar",
             "delete": "eliminar",
             "cancel": "cancelar",
-            "purchase": "comprar"
+            "purchase": "comprar",
+            "run": "ejecutar"
           },
           "toasts": {
             "updated": "{{name}} actualizado",
@@ -1901,6 +2066,7 @@
           "batch_calls": "Llamadas por lotes",
           "calls": "Llamadas",
           "contacts": "Contactos",
+          "evaluations": "Evaluaciones",
           "settings": "Configuración"
         }
       },
