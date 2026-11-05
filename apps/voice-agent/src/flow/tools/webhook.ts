@@ -2,6 +2,7 @@ import { isIP } from "node:net"
 import { tool } from "@livekit/agents"
 import { z } from "zod"
 
+import { functionNodeResultVariables } from "@workspace/shared/api/agent-config/schemas"
 import type { WebhookTool } from "@workspace/shared/api/agent-config/types"
 import type { Variables } from "@/flow/variables"
 
@@ -12,10 +13,17 @@ const PLACEHOLDER = /\{\{\s*([a-z0-9_]+)\s*\}\}/g
 const EXACT_PLACEHOLDER = /^\{\{\s*([a-z0-9_]+)\s*\}\}$/
 const PLAIN_NUMBER = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/
 
+export type WebhookResult = {
+  ok: boolean
+  status?: number
+  output: string
+}
+
 class WebhookRequestError extends Error {
   constructor(
     message: string,
-    readonly retryable: boolean
+    readonly retryable: boolean,
+    readonly status?: number
   ) {
     super(message)
     this.name = "WebhookRequestError"
@@ -135,35 +143,88 @@ export function createWebhookTool(
     name: definition.name,
     description: variables.replace(definition.description),
     parameters: z.object(shape),
-    execute: async (args) => {
-      let lastError = "Webhook failed"
-
-      for (let attempt = 0; attempt <= definition.maxRetries; attempt++) {
-        try {
-          return await requestWebhook(definition, variables, args)
-        } catch (error) {
-          const retryable =
-            error instanceof WebhookRequestError ? error.retryable : true
-          lastError = error instanceof Error ? error.message : "Webhook failed"
-          if (!retryable || attempt === definition.maxRetries) {
-            break
-          }
-          await new Promise((resolve) =>
-            setTimeout(resolve, Math.min(4000, 200 * 2 ** attempt))
-          )
-        }
-      }
-
-      return lastError
-    },
+    execute: async (args) =>
+      (await runWebhook(definition, variables, args)).output,
   })
+}
+
+export async function runWebhook(
+  definition: WebhookTool,
+  variables: Variables,
+  args: Record<string, unknown>,
+  signal?: AbortSignal
+): Promise<WebhookResult> {
+  let failure: WebhookResult = { ok: false, output: "Webhook failed" }
+
+  for (let attempt = 0; attempt <= definition.maxRetries; attempt++) {
+    try {
+      return await requestWebhook(definition, variables, args, signal)
+    } catch (error) {
+      const requestError = error instanceof WebhookRequestError ? error : null
+      const retryable = requestError ? requestError.retryable : true
+      failure = {
+        ok: false,
+        output: error instanceof Error ? error.message : "Webhook failed",
+      }
+      if (requestError?.status !== undefined) {
+        failure.status = requestError.status
+      }
+      if (!retryable || signal?.aborted || attempt === definition.maxRetries) {
+        break
+      }
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.min(4000, 200 * 2 ** attempt))
+      )
+    }
+  }
+
+  return failure
+}
+
+// Without an LLM, parameters can only come from variables: a missing required
+// one fails without sending a request, and a missing optional one is sent empty
+// instead of as a literal {{placeholder}}.
+export async function runFunctionNodeWebhook(
+  definition: WebhookTool,
+  variables: Variables,
+  signal: AbortSignal
+) {
+  const args: Record<string, unknown> = {}
+  const missing: string[] = []
+
+  for (const parameter of definition.parameters) {
+    const placeholder = `{{${parameter.name}}}`
+    if (variables.replace(placeholder) !== placeholder) {
+      continue
+    }
+    if (parameter.required) {
+      missing.push(parameter.name)
+    } else {
+      args[parameter.name] = ""
+    }
+  }
+
+  const result: WebhookResult =
+    missing.length > 0
+      ? {
+          ok: false,
+          output: `Webhook failed: missing required parameters: ${missing.join(", ")}`,
+        }
+      : await runWebhook(definition, variables, args, signal)
+
+  const names = functionNodeResultVariables(definition.name)
+  variables.set(names.ok, String(result.ok))
+  variables.set(names.status, result.status?.toString() ?? "")
+
+  return result
 }
 
 async function requestWebhook(
   tool: WebhookTool,
   variables: Variables,
-  args: Record<string, unknown>
-) {
+  args: Record<string, unknown>,
+  signal?: AbortSignal
+): Promise<WebhookResult> {
   let url: URL
   try {
     url = new URL(fill(tool.url, args, variables))
@@ -200,7 +261,9 @@ async function requestWebhook(
     method: tool.method,
     headers,
     body: requestBody,
-    signal: AbortSignal.timeout(tool.timeoutMs),
+    signal: signal
+      ? AbortSignal.any([AbortSignal.timeout(tool.timeoutMs), signal])
+      : AbortSignal.timeout(tool.timeoutMs),
   })
   const body = (await response.text()).slice(0, RESPONSE_READ_LIMIT)
 
@@ -208,12 +271,17 @@ async function requestWebhook(
     const snippet = body.slice(0, 500)
     throw new WebhookRequestError(
       `Webhook failed: ${response.status} ${response.statusText}${snippet ? `: ${snippet}` : ""}`,
-      true
+      true,
+      response.status
     )
   }
 
   storeResponseVariables(tool, variables, body)
-  return body.slice(0, LLM_RESULT_LIMIT)
+  return {
+    ok: true,
+    status: response.status,
+    output: body.slice(0, LLM_RESULT_LIMIT),
+  }
 }
 
 function storeResponseVariables(

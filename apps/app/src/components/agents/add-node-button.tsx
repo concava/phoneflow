@@ -1,5 +1,5 @@
 import { useReactFlow } from "@xyflow/react"
-import { Phone, PhoneOff, Play, Plus } from "lucide-react"
+import { Phone, PhoneOff, Play, Plus, Webhook } from "lucide-react"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -23,7 +23,7 @@ export function AddNodeButton() {
   const flow = useReactFlow()
   const { t } = useTranslation()
 
-  function handleAdd(type: "start" | "conversation" | "end") {
+  function handleAdd(type: "start" | "conversation" | "function" | "end") {
     const id = `${type}-${Date.now()}`
     const position = getNextNodePosition(nodes)
 
@@ -53,6 +53,16 @@ export function AddNodeButton() {
             type: "prompt",
             text: "Enter instructions here",
           },
+        },
+      })
+    } else if (type === "function") {
+      addNode({
+        id,
+        type: "function",
+        position,
+        data: {
+          name: t("components.agents.add_node_button.function"),
+          toolId: "",
         },
       })
     } else if (type === "end") {
@@ -90,6 +100,12 @@ export function AddNodeButton() {
             <Phone className="h-4 w-4 text-blue-600" />
           </span>
           {t("components.agents.add_node_button.conversation")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleAdd("function")}>
+          <span className="flex h-6 w-6 items-center justify-center rounded border border-border">
+            <Webhook className="h-4 w-4 text-amber-600" />
+          </span>
+          {t("components.agents.add_node_button.function")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleAdd("end")}>
           <span className="flex h-6 w-6 items-center justify-center rounded border border-border">

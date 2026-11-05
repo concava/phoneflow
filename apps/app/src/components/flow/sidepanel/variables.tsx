@@ -2,6 +2,7 @@ import { cn } from "cn"
 import { Plus, Trash2 } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 
+import { functionNodeResultVariables } from "@workspace/shared/api/agent-config/schemas"
 import type { DynamicVariable } from "@workspace/shared/api/agent-config/types"
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -222,6 +223,15 @@ function extractedVariables(
       if (variable.name) {
         keys.add(variable.name)
       }
+    }
+    if (
+      config.nodes.some(
+        (node) => node.type === "function" && node.data.toolId === tool.id
+      )
+    ) {
+      const { ok, status } = functionNodeResultVariables(tool.name)
+      keys.add(ok)
+      keys.add(status)
     }
   }
 

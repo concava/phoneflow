@@ -9,9 +9,11 @@ import {
 import { create } from "zustand"
 
 import { createDefaultAgentConfig } from "@workspace/shared/agents/templates/defaults"
+import { functionNodeResultVariables } from "@workspace/shared/api/agent-config/schemas"
 import type {
   AgentConfig,
   AgentTool,
+  FlowEdgeCondition,
   FlowEdgeConfig,
   FlowNodeConfig,
 } from "@workspace/shared/api/agent-config/types"
@@ -26,6 +28,7 @@ import {
   loadEditorAgentConfig,
   validateAgentConfig,
 } from "@/components/flow/agent-config"
+import { fillFunctionEdgeVariables } from "@/stores/function-edges"
 
 export type FlowSidePanelState =
   | { kind: "closed" }
@@ -124,6 +127,32 @@ function applyFlowSelection(
       ...edge,
       selected: edge.id === selectedEdgeId,
     })),
+  }
+}
+
+function defaultEdgeCondition(
+  config: EditorAgentConfig,
+  sourceId: string
+): FlowEdgeCondition {
+  const source = config.nodes.find((node) => node.id === sourceId)
+  if (source?.type !== "function") {
+    return { type: "prompt", prompt: "Transition condition" }
+  }
+  if (!config.edges.some((edge) => edge.source === sourceId)) {
+    return { type: "always" }
+  }
+
+  const tool = config.tools.find((entry) => entry.id === source.data.toolId)
+  return {
+    type: "expression",
+    match: "all",
+    conditions: [
+      {
+        variable: tool ? functionNodeResultVariables(tool.name).ok : "",
+        operator: "equals",
+        value: "true",
+      },
+    ],
   }
 }
 
@@ -274,8 +303,16 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
       agent: state.agent,
     })),
   setNode: (node) =>
-    set((state) =>
-      commitEditorConfig(
+    set((state) => {
+      const previous = state.config.nodes.find((entry) => entry.id === node.id)
+      const tool =
+        node.type === "function" &&
+        previous?.type === "function" &&
+        node.data.toolId !== previous.data.toolId
+          ? state.config.tools.find((entry) => entry.id === node.data.toolId)
+          : undefined
+
+      return commitEditorConfig(
         state,
         applyFlowSelection(
           {
@@ -283,12 +320,19 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
             nodes: state.config.nodes.map((entry) =>
               entry.id === node.id ? node : entry
             ),
+            edges: tool
+              ? fillFunctionEdgeVariables(
+                  state.config.edges,
+                  node.id,
+                  functionNodeResultVariables(tool.name).ok
+                )
+              : state.config.edges,
           },
           { nodeId: node.id }
         ),
         { sidePanel: { kind: "node", node } }
       )
-    ),
+    }),
   setEdge: (edge) =>
     set((state) =>
       commitEditorConfig(
@@ -308,6 +352,9 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
   createTool: (tool, nodeId) =>
     set((state) => {
       const nodes = state.config.nodes.map((node) => {
+        if (node.id === nodeId && node.type === "function") {
+          return { ...node, data: { ...node.data, toolId: tool.id } }
+        }
         if (
           node.id !== nodeId ||
           node.type !== "conversation" ||
@@ -325,7 +372,22 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
         }
       })
 
-      return commitTools(state, [...state.config.tools, tool], nodes)
+      const isFunctionNode = state.config.nodes.some(
+        (node) => node.id === nodeId && node.type === "function"
+      )
+      const edges = isFunctionNode
+        ? fillFunctionEdgeVariables(
+            state.config.edges,
+            nodeId,
+            functionNodeResultVariables(tool.name).ok
+          )
+        : state.config.edges
+
+      return commitTools(
+        { ...state, config: { ...state.config, edges } },
+        [...state.config.tools, tool],
+        nodes
+      )
     }),
   editTool: (tool) =>
     set((state) =>
@@ -354,7 +416,9 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
       })
       const referenced = nodes.some(
         (node) =>
-          node.type === "conversation" && node.data.toolIds?.includes(toolId)
+          (node.type === "conversation" &&
+            node.data.toolIds?.includes(toolId)) ||
+          (node.type === "function" && node.data.toolId === toolId)
       )
 
       return commitTools(
@@ -450,16 +514,16 @@ export const useAgentStore = create<AgentEditorStore>((set) => ({
   },
   onConnect: (connection) => {
     lastConnectAt = Date.now()
-    const edge: FlowEdgeConfig = {
-      id: crypto.randomUUID(),
-      source: connection.source,
-      target: connection.target,
-      data: {
-        condition: { type: "prompt", prompt: "Transition condition" },
-      },
-    }
 
     set((state) => {
+      const edge: FlowEdgeConfig = {
+        id: crypto.randomUUID(),
+        source: connection.source,
+        target: connection.target,
+        data: {
+          condition: defaultEdgeCondition(state.config, connection.source),
+        },
+      }
       const edges = addEdge(edge, state.config.edges)
       if (edges.length === state.config.edges.length) {
         return state

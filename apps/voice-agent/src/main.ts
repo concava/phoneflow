@@ -87,6 +87,8 @@ export default defineAgent({
       defaults: config.dynamicVariables,
     })
 
+    const agent = new FlowAgent(flowGraph, variables, sip, callId, ctx.room)
+
     const turn = config.turnHandling
     const session = new voice.AgentSession({
       vad: ctx.proc.userData.vad as silero.VAD,
@@ -121,6 +123,10 @@ export default defineAgent({
         }
 
         if (event.newState !== "away") return
+        if (agent.isRunningFunctionNode) {
+          session._updateUserState("listening")
+          return
+        }
         if (idleCount >= config.call.maxIdleMessages) return
 
         idleCount += 1
@@ -141,7 +147,7 @@ export default defineAgent({
     })
 
     await session.start({
-      agent: new FlowAgent(flowGraph, variables, sip, callId, ctx.room),
+      agent,
       room: ctx.room,
       record: false,
     })

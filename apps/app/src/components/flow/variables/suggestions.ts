@@ -1,3 +1,4 @@
+import { functionNodeResultVariables } from "@workspace/shared/api/agent-config/schemas"
 import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
 import { useAgentStore } from "@/stores/agent"
 
@@ -56,6 +57,15 @@ function knownVariables(config: VariableConfig) {
     }
     for (const variable of tool.responseVariables) {
       entries.push({ key: variable.name, label: "Extracted" })
+    }
+    if (
+      config.nodes.some(
+        (node) => node.type === "function" && node.data.toolId === tool.id
+      )
+    ) {
+      const { ok, status } = functionNodeResultVariables(tool.name)
+      entries.push({ key: ok, label: "Extracted" })
+      entries.push({ key: status, label: "Extracted" })
     }
   }
 

@@ -24,13 +24,23 @@ export interface FlowConversationNode {
   outgoingEdges: FlowEdge[]
 }
 
+export interface FlowFunctionNode {
+  id: string
+  type: "function"
+  name: string
+  isStart?: true
+  toolId: string
+  message?: string
+  outgoingEdges: FlowEdge[]
+}
+
 export interface FlowEndNode {
   id: string
   type: "end"
   name: string
 }
 
-export type FlowNode = FlowConversationNode | FlowEndNode
+export type FlowNode = FlowConversationNode | FlowFunctionNode | FlowEndNode
 
 export interface FlowEdge {
   condition: FlowEdgeCondition
@@ -39,6 +49,6 @@ export interface FlowEdge {
 
 export interface FlowGraph {
   globalPrompt: string
-  startNode: FlowConversationNode
+  startNode: FlowConversationNode | FlowFunctionNode
   tools: AgentTool[]
 }

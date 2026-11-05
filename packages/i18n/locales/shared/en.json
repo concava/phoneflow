@@ -118,6 +118,12 @@
         "conversation_name": {
           "required": "Conversation node name is required"
         },
+        "function_name": {
+          "required": "Function node name is required"
+        },
+        "function_tool": {
+          "required": "Select a webhook for this function node"
+        },
         "end_name": {
           "required": "End node name is required"
         }
@@ -145,12 +151,17 @@
           "unknown_tool": "Unknown tool",
           "duplicate_tool": "Duplicate tool",
           "start_required": "Add a start node to the flow",
-          "start_only_one": "Only one start node is allowed"
+          "start_only_one": "Only one start node is allowed",
+          "function_no_edges": "Function node needs at least one outgoing transition",
+          "function_missing_parameter": "Webhook parameter \"{{parameter}}\" must match a known variable, because no LLM can fill it in a function node",
+          "function_variable_conflict": "Variable \"{{variable}}\" is set by this function node and already exists"
         },
         "edges": {
           "duplicate": "Duplicate transition",
           "disconnected": "Transition is disconnected",
-          "always_alone": "Always transition must be the only transition on that node"
+          "always_alone": "Always transition must be the only transition on that node",
+          "function_prompt": "Transitions from a function node cannot use a prompt condition",
+          "function_multiple_always": "A function node can only have one always transition"
         },
         "tools": {
           "duplicate": "Duplicate tool",

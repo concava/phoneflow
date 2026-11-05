@@ -7,6 +7,7 @@ Build voice agents by connecting nodes, deploy them to handle inbound and outbou
 ## Features
 
 - **Visual flow builder**: Build agents as a graph of nodes and edges by connecting them on a canvas. The conversation starts at the start node and branches through different paths based on transition conditions. Each node carries a prompt, each edge defines a condition that moves the conversation forward when met.
+- **Function nodes**: Run a webhook as a guaranteed step of the flow, with no LLM deciding whether to call it, store its response as variables, and branch on the result, for example to look up the customer before greeting them.
 - **Provider, model and voice selection**: Mix and match STT, LLM and TTS providers, models and voices, with the price per minute shown for each option.
 - **Dynamic variables**: A lightweight templating engine lets you parameterize prompts and fill in values at runtime.
 - **In-editor testing**: Test your agents as you iterate right from the editor side panel.
