@@ -2,6 +2,7 @@ import type { z } from "zod"
 
 import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
 import type {
+  callAnalyticsQuerySchema,
   callListQuerySchema,
   callListSortBySchema,
   callNumericFilterOperatorSchema,
@@ -164,4 +165,38 @@ export type JoinCallResponse = {
 
 export type EndCallResponse = {
   ok: true
+}
+
+export type CallAnalyticsQuery = z.infer<typeof callAnalyticsQuerySchema>
+
+export type CallAnalyticsGranularity = "day" | "hour"
+
+export type CallAnalyticsMetrics = {
+  calls: number
+  answered: number
+  noAnswer: number
+  inProgress: number
+  /** Answered share of the calls that have finished; null when none have. */
+  answerRate: number | null
+  totalDurationMs: number
+  averageAnsweredDurationMs: number | null
+  /** Null when no call in the group has a cost, as on self-hosted. */
+  totalCost: number | null
+}
+
+export type CallAnalyticsBucket = CallAnalyticsMetrics & {
+  bucketStart: string
+}
+
+export type CallAnalyticsAgent = CallAnalyticsMetrics & {
+  agentId: string
+  /** Null when the agent has been deleted: calls outlive their agent. */
+  agentName: string | null
+}
+
+export type CallAnalyticsResponse = {
+  granularity: CallAnalyticsGranularity
+  totals: CallAnalyticsMetrics
+  series: CallAnalyticsBucket[]
+  agents: CallAnalyticsAgent[]
 }

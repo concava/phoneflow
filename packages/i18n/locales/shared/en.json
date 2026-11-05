@@ -181,6 +181,17 @@
         }
       }
     },
+    "calls": {
+      "analytics": {
+        "timezone": {
+          "invalid": "Timezone must be a valid IANA name"
+        },
+        "range": {
+          "order": "The start of the range must be before the end",
+          "max": "The date range cannot be longer than 366 days"
+        }
+      }
+    },
     "phone_numbers": {
       "phone_number_request": {
         "agent_id": {

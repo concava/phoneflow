@@ -10,6 +10,7 @@ import { db } from "@workspace/db/client"
 import { callsTable } from "@workspace/db/schema/calls"
 import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
 import {
+  callAnalyticsQuerySchema,
   callListQuerySchema,
   completeCallRequestSchema,
   startInboundCallRequestSchema,
@@ -19,6 +20,7 @@ import {
   unansweredCallRequestSchema,
 } from "@workspace/shared/api/calls/schemas"
 import type {
+  CallAnalyticsResponse,
   CallDetailResponse,
   CallDownloadResponse,
   CallListResponse,
@@ -36,6 +38,7 @@ import { auth } from "@/lib/auth/config"
 import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { requireAuthToken } from "@/lib/auth/token"
+import { getCallAnalytics } from "@/lib/call-analytics"
 import { computeCallCosts } from "@/lib/call-cost"
 import { recordContactCall, resolvePhoneContactId } from "@/lib/contacts"
 import {
@@ -579,6 +582,27 @@ callRoutes.get("/export/:organizationId", requireAuthToken, async (c) => {
     return c.json({ error: "Failed to export calls" }, 500)
   }
 })
+
+callRoutes.get(
+  "/analytics",
+  requireOrganization,
+  validator("query", callAnalyticsQuerySchema),
+  async (c) => {
+    const locale = c.get("locale")
+    const organizationId = c.get("organizationId")
+
+    try {
+      const analytics = await getCallAnalytics(
+        organizationId,
+        c.req.valid("query")
+      )
+
+      return c.json(analytics satisfies CallAnalyticsResponse)
+    } catch {
+      return c.json({ error: t(locale, "calls.analytics_failed") }, 500)
+    }
+  }
+)
 
 callRoutes.get("/:callId/recording", requireOrganization, async (c) => {
   const locale = c.get("locale")

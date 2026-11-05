@@ -49,6 +49,10 @@
       "page_title": "{{name}} - Phoneflow",
       "breadcrumb_parent": "Agentes"
     },
+    "analytics": {
+      "page_title": "Analíticas - Phoneflow",
+      "breadcrumb": "Analíticas"
+    },
     "calls": {
       "page_title": "Llamadas - Phoneflow",
       "breadcrumb": "Llamadas"
@@ -416,6 +420,89 @@
       },
       "test_agent_button": {
         "trigger": "Probar"
+      }
+    },
+    "analytics": {
+      "filters": {
+        "range": {
+          "label": "Periodo",
+          "today": "Hoy",
+          "7d": "Últimos 7 días",
+          "30d": "Últimos 30 días",
+          "90d": "Últimos 90 días",
+          "custom": "Personalizado"
+        },
+        "date": {
+          "label": "Fechas"
+        },
+        "timezone_note": "Horas en {{timeZone}}"
+      },
+      "tiles": {
+        "calls": {
+          "label": "Llamadas",
+          "detail": "{{answered}} contestadas, {{noAnswer}} sin respuesta"
+        },
+        "answer_rate": {
+          "label": "Tasa de respuesta",
+          "detail": "Contestadas sobre llamadas finalizadas"
+        },
+        "average_duration": {
+          "label": "Duración media",
+          "detail": "De las llamadas contestadas"
+        },
+        "total_duration": {
+          "label": "Duración total",
+          "detail": "De todas las llamadas"
+        },
+        "total_cost": {
+          "label": "Coste total",
+          "detail": "Llamadas con coste registrado"
+        }
+      },
+      "charts": {
+        "bucket": "Periodo",
+        "no_data": "No hay datos para este periodo",
+        "show_table": "Ver como tabla",
+        "show_chart": "Ver como gráfico",
+        "volume": {
+          "title": "Volumen de llamadas",
+          "description": "Llamadas iniciadas, por resultado. Otras son las que están en curso o tienen otro resultado.",
+          "answered": "Contestadas",
+          "no_answer": "Sin respuesta",
+          "other": "Otras"
+        },
+        "answer_rate": {
+          "title": "Tasa de respuesta",
+          "description": "Contestadas sobre llamadas finalizadas",
+          "value": "Tasa de respuesta"
+        },
+        "duration": {
+          "title": "Duración media",
+          "description": "De las llamadas contestadas",
+          "value": "Duración media",
+          "total": "Duración total"
+        },
+        "cost": {
+          "title": "Coste",
+          "description": "Gasto en las llamadas iniciadas en cada periodo",
+          "value": "Coste"
+        }
+      },
+      "agents": {
+        "title": "Por agente",
+        "agent": "Agente",
+        "calls": "Llamadas",
+        "answered": "Contestadas",
+        "average_duration": "Duración media",
+        "cost": "Coste",
+        "deleted": "Agente eliminado"
+      },
+      "empty": {
+        "title": "No hay llamadas en este periodo",
+        "description": "Prueba con un rango de fechas más amplio o con menos filtros."
+      },
+      "error": {
+        "title": "No se han podido cargar las analíticas"
       }
     },
     "flow": {
@@ -1899,6 +1986,7 @@
           "agents": "Agentes",
           "phone_numbers": "Números de teléfono",
           "batch_calls": "Llamadas por lotes",
+          "analytics": "Analíticas",
           "calls": "Llamadas",
           "contacts": "Contactos",
           "settings": "Configuración"

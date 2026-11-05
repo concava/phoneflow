@@ -110,3 +110,57 @@ export const callListQuerySchema = z
     sortDir: z.enum(["asc", "desc"]).default("desc"),
   })
   .strict()
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+const CALL_ANALYTICS_MAX_RANGE_MS = 366 * DAY_MS
+export const CALL_ANALYTICS_HOURLY_MAX_RANGE_MS = 2 * DAY_MS
+
+function isIanaTimeZone(value: string) {
+  // Intl also accepts offsets like "+01:00", which Postgres would read as a
+  // POSIX zone with the sign flipped.
+  if (!/^[A-Za-z][A-Za-z0-9_+-]*(\/[A-Za-z0-9_+-]+)*$/.test(value)) {
+    return false
+  }
+
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: value })
+    return true
+  } catch {
+    return false
+  }
+}
+
+export const callAnalyticsQuerySchema = z
+  .object({
+    from: z.iso.datetime({ offset: true }),
+    to: z.iso.datetime({ offset: true }),
+    timezone: z.string().refine(isIanaTimeZone, {
+      message: "schemas.calls.analytics.timezone.invalid",
+    }),
+    agentIds: z
+      .union([z.string(), z.array(z.string())])
+      .transform((value) =>
+        (Array.isArray(value) ? value : [value])
+          .flatMap((item) => item.split(","))
+          .filter(Boolean)
+      )
+      .pipe(z.array(z.uuid()))
+      .optional(),
+    direction: z.enum(["inbound", "outbound"]).optional(),
+    channel: z.enum(["phone_call", "web_call"]).optional(),
+  })
+  .strict()
+  .refine((data) => new Date(data.from) < new Date(data.to), {
+    message: "schemas.calls.analytics.range.order",
+    path: ["to"],
+  })
+  .refine(
+    (data) =>
+      new Date(data.to).getTime() - new Date(data.from).getTime() <=
+      CALL_ANALYTICS_MAX_RANGE_MS,
+    {
+      message: "schemas.calls.analytics.range.max",
+      path: ["to"],
+    }
+  )

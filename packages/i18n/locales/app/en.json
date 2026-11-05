@@ -49,6 +49,10 @@
       "page_title": "{{name}} - Phoneflow",
       "breadcrumb_parent": "Agents"
     },
+    "analytics": {
+      "page_title": "Analytics - Phoneflow",
+      "breadcrumb": "Analytics"
+    },
     "calls": {
       "page_title": "Calls - Phoneflow",
       "breadcrumb": "Calls"
@@ -416,6 +420,89 @@
       },
       "test_agent_button": {
         "trigger": "Test"
+      }
+    },
+    "analytics": {
+      "filters": {
+        "range": {
+          "label": "Period",
+          "today": "Today",
+          "7d": "Last 7 days",
+          "30d": "Last 30 days",
+          "90d": "Last 90 days",
+          "custom": "Custom"
+        },
+        "date": {
+          "label": "Dates"
+        },
+        "timezone_note": "Times shown in {{timeZone}}"
+      },
+      "tiles": {
+        "calls": {
+          "label": "Calls",
+          "detail": "{{answered}} answered, {{noAnswer}} no answer"
+        },
+        "answer_rate": {
+          "label": "Answer rate",
+          "detail": "Answered out of finished calls"
+        },
+        "average_duration": {
+          "label": "Average duration",
+          "detail": "Of answered calls"
+        },
+        "total_duration": {
+          "label": "Total duration",
+          "detail": "Across all calls"
+        },
+        "total_cost": {
+          "label": "Total cost",
+          "detail": "Calls with a recorded cost"
+        }
+      },
+      "charts": {
+        "bucket": "Period",
+        "no_data": "No data for this period",
+        "show_table": "Show as table",
+        "show_chart": "Show as chart",
+        "volume": {
+          "title": "Call volume",
+          "description": "Calls started, by outcome. Other means in progress or another outcome.",
+          "answered": "Answered",
+          "no_answer": "No answer",
+          "other": "Other"
+        },
+        "answer_rate": {
+          "title": "Answer rate",
+          "description": "Answered out of finished calls",
+          "value": "Answer rate"
+        },
+        "duration": {
+          "title": "Average duration",
+          "description": "Of answered calls",
+          "value": "Average duration",
+          "total": "Total duration"
+        },
+        "cost": {
+          "title": "Cost",
+          "description": "Spend on the calls started in each period",
+          "value": "Cost"
+        }
+      },
+      "agents": {
+        "title": "By agent",
+        "agent": "Agent",
+        "calls": "Calls",
+        "answered": "Answered",
+        "average_duration": "Average duration",
+        "cost": "Cost",
+        "deleted": "Deleted agent"
+      },
+      "empty": {
+        "title": "No calls in this period",
+        "description": "Try a wider date range or fewer filters."
+      },
+      "error": {
+        "title": "Could not load analytics"
       }
     },
     "flow": {
@@ -1899,6 +1986,7 @@
           "agents": "Agents",
           "phone_numbers": "Phone numbers",
           "batch_calls": "Batch calls",
+          "analytics": "Analytics",
           "calls": "Calls",
           "contacts": "Contacts",
           "settings": "Settings"

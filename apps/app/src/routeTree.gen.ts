@@ -28,6 +28,7 @@ import { Route as authorizedorganizationInviteMembersPageRouteImport } from './r
 import { Route as unauthorizedSigninSsoPageRouteImport } from './routes/(unauthorized)/signin/sso/page'
 import { Route as authorizedorganizationsidebarSplatPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/$/page'
 import { Route as authorizedorganizationsidebarAgentsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/agents/page'
+import { Route as authorizedorganizationsidebarAnalyticsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/analytics/page'
 import { Route as authorizedorganizationsidebarBatchCallsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/batch-calls/page'
 import { Route as authorizedorganizationsidebarCallsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/calls/page'
 import { Route as authorizedorganizationsidebarContactsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/contacts/page'
@@ -148,6 +149,12 @@ const authorizedorganizationsidebarAgentsPageRoute =
     path: '/agents/',
     getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
+const authorizedorganizationsidebarAnalyticsPageRoute =
+  authorizedorganizationsidebarAnalyticsPageRouteImport.update({
+    id: '/analytics/',
+    path: '/analytics/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 const authorizedorganizationsidebarBatchCallsPageRoute =
   authorizedorganizationsidebarBatchCallsPageRouteImport.update({
     id: '/batch-calls/',
@@ -243,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/signin/sso/': typeof unauthorizedSigninSsoPageRoute
   '/$/': typeof authorizedorganizationsidebarSplatPageRoute
   '/agents/': typeof authorizedorganizationsidebarAgentsPageRoute
+  '/analytics/': typeof authorizedorganizationsidebarAnalyticsPageRoute
   '/batch-calls/': typeof authorizedorganizationsidebarBatchCallsPageRoute
   '/calls/': typeof authorizedorganizationsidebarCallsPageRoute
   '/contacts/': typeof authorizedorganizationsidebarContactsPageRoute
@@ -272,6 +280,7 @@ export interface FileRoutesByTo {
   '/signin/sso': typeof unauthorizedSigninSsoPageRoute
   '/$': typeof authorizedorganizationsidebarSplatPageRoute
   '/agents': typeof authorizedorganizationsidebarAgentsPageRoute
+  '/analytics': typeof authorizedorganizationsidebarAnalyticsPageRoute
   '/batch-calls': typeof authorizedorganizationsidebarBatchCallsPageRoute
   '/calls': typeof authorizedorganizationsidebarCallsPageRoute
   '/contacts': typeof authorizedorganizationsidebarContactsPageRoute
@@ -307,6 +316,7 @@ export interface FileRoutesById {
   '/(unauthorized)/signin/sso/': typeof unauthorizedSigninSsoPageRoute
   '/(authorized)/(organization)/(sidebar)/$/': typeof authorizedorganizationsidebarSplatPageRoute
   '/(authorized)/(organization)/(sidebar)/agents/': typeof authorizedorganizationsidebarAgentsPageRoute
+  '/(authorized)/(organization)/(sidebar)/analytics/': typeof authorizedorganizationsidebarAnalyticsPageRoute
   '/(authorized)/(organization)/(sidebar)/batch-calls/': typeof authorizedorganizationsidebarBatchCallsPageRoute
   '/(authorized)/(organization)/(sidebar)/calls/': typeof authorizedorganizationsidebarCallsPageRoute
   '/(authorized)/(organization)/(sidebar)/contacts/': typeof authorizedorganizationsidebarContactsPageRoute
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/signin/sso/'
     | '/$/'
     | '/agents/'
+    | '/analytics/'
     | '/batch-calls/'
     | '/calls/'
     | '/contacts/'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/signin/sso'
     | '/$'
     | '/agents'
+    | '/analytics'
     | '/batch-calls'
     | '/calls'
     | '/contacts'
@@ -402,6 +414,7 @@ export interface FileRouteTypes {
     | '/(unauthorized)/signin/sso/'
     | '/(authorized)/(organization)/(sidebar)/$/'
     | '/(authorized)/(organization)/(sidebar)/agents/'
+    | '/(authorized)/(organization)/(sidebar)/analytics/'
     | '/(authorized)/(organization)/(sidebar)/batch-calls/'
     | '/(authorized)/(organization)/(sidebar)/calls/'
     | '/(authorized)/(organization)/(sidebar)/contacts/'
@@ -557,6 +570,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authorizedorganizationsidebarAgentsPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
+    '/(authorized)/(organization)/(sidebar)/analytics/': {
+      id: '/(authorized)/(organization)/(sidebar)/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof authorizedorganizationsidebarAnalyticsPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
     '/(authorized)/(organization)/(sidebar)/batch-calls/': {
       id: '/(authorized)/(organization)/(sidebar)/batch-calls/'
       path: '/batch-calls'
@@ -689,6 +709,7 @@ interface authorizedorganizationsidebarLayoutRouteChildren {
   authorizedorganizationsidebarPageRoute: typeof authorizedorganizationsidebarPageRoute
   authorizedorganizationsidebarSplatPageRoute: typeof authorizedorganizationsidebarSplatPageRoute
   authorizedorganizationsidebarAgentsPageRoute: typeof authorizedorganizationsidebarAgentsPageRoute
+  authorizedorganizationsidebarAnalyticsPageRoute: typeof authorizedorganizationsidebarAnalyticsPageRoute
   authorizedorganizationsidebarBatchCallsPageRoute: typeof authorizedorganizationsidebarBatchCallsPageRoute
   authorizedorganizationsidebarCallsPageRoute: typeof authorizedorganizationsidebarCallsPageRoute
   authorizedorganizationsidebarContactsPageRoute: typeof authorizedorganizationsidebarContactsPageRoute
@@ -707,6 +728,8 @@ const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsi
       authorizedorganizationsidebarSplatPageRoute,
     authorizedorganizationsidebarAgentsPageRoute:
       authorizedorganizationsidebarAgentsPageRoute,
+    authorizedorganizationsidebarAnalyticsPageRoute:
+      authorizedorganizationsidebarAnalyticsPageRoute,
     authorizedorganizationsidebarBatchCallsPageRoute:
       authorizedorganizationsidebarBatchCallsPageRoute,
     authorizedorganizationsidebarCallsPageRoute:
