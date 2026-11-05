@@ -126,9 +126,9 @@ export function CallExtraction({ call }: { call: CallDetailResponse }) {
             variant="outline"
             size="sm"
             className="ml-auto"
-            disabled={
-              rerunMutation.isPending || call.extractionStatus === "pending"
-            }
+            // The server decides: it answers 409 while a job is running, and takes
+            // over a pending extraction once it is stale, so a lost job can recover.
+            disabled={rerunMutation.isPending}
             onClick={() => rerunMutation.mutate()}
           >
             {rerunMutation.isPending ? <Spinner /> : <RotateCwIcon />}
