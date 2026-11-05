@@ -2,11 +2,14 @@ import type { z } from "zod"
 
 import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
 import type {
+  callExtractionSchema,
   callListQuerySchema,
   callListSortBySchema,
   callNumericFilterOperatorSchema,
   callTranscriptSchema,
   completeCallRequestSchema,
+  extractionErrorCodeSchema,
+  extractionResultSchema,
   startInboundCallRequestSchema,
   startOutboundCallRequestSchema,
   startWebCallRequestSchema,
@@ -34,6 +37,11 @@ export type CallDispatchMetadata = {
 }
 
 export type CallTranscript = z.infer<typeof callTranscriptSchema>
+
+export type CallExtraction = z.infer<typeof callExtractionSchema>
+export type ExtractionStatus = "pending" | "completed" | "failed" | "skipped"
+export type ExtractionErrorCode = z.infer<typeof extractionErrorCodeSchema>
+export type ExtractionResult = z.infer<typeof extractionResultSchema>
 
 export type StartWebCallRequest = z.infer<typeof startWebCallRequestSchema>
 export type StartInboundCallRequest = z.infer<
@@ -141,6 +149,9 @@ export type CallDetailResponse = {
   totalCost: string | null
   transcript: CallTranscript | null
   variables: CallVariableValues | null
+  extraction: CallExtraction | null
+  extractionStatus: ExtractionStatus | null
+  extractionError: ExtractionErrorCode | null
   createdAt: Date
   updatedAt: Date
   agent: { name: string } | null
@@ -164,4 +175,17 @@ export type JoinCallResponse = {
 
 export type EndCallResponse = {
   ok: true
+}
+
+export type CallExtractionInputResponse = {
+  transcript: CallTranscript
+  startedAt: Date
+}
+
+export type ReportExtractionResultResponse = {
+  ok: true
+}
+
+export type RerunExtractionResponse = {
+  extractionStatus: ExtractionStatus
 }

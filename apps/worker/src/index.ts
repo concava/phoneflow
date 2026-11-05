@@ -4,8 +4,9 @@ import { sdk } from "./instrumentation"
 import { batchCallsWorker } from "@/batch-calls/worker"
 import { emailsWorker } from "@/emails/worker"
 import { connection } from "@/lib/redis"
+import { postCallWorker } from "@/post-call/worker"
 
-const workers = [emailsWorker, batchCallsWorker]
+const workers = [emailsWorker, batchCallsWorker, postCallWorker]
 
 for (const worker of workers) {
   worker.on("ready", () => {

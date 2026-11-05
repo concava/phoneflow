@@ -1,6 +1,7 @@
 import { useAgentStore } from "@/stores/agent"
 import { ConfigPanel } from "./config"
 import { EdgePanel } from "./edges/condition"
+import { ExtractionPanel } from "./extraction"
 import { GlobalPromptPanel } from "./global-prompt"
 import { ConversationNodePanel } from "./nodes/conversation"
 import { EndNodePanel } from "./nodes/end"
@@ -21,6 +22,8 @@ export function FlowSidePanel() {
       return <VariablesPanel />
     case "config":
       return <ConfigPanel />
+    case "extraction":
+      return <ExtractionPanel />
     case "node":
       switch (sidePanel.node.type) {
         case "conversation":

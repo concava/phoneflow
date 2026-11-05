@@ -164,6 +164,26 @@
         "variables": {
           "unknown": "Unknown variable \"{{variable}}\""
         }
+      },
+      "post_call_extraction": {
+        "fields": {
+          "min": "Add at least one field",
+          "max": "You can add up to 30 fields"
+        },
+        "key": {
+          "required": "Field key is required",
+          "format": "Field key must start with a lowercase letter and contain only lowercase letters, numbers, or underscores",
+          "duplicate": "Duplicate field key"
+        },
+        "description": {
+          "required": "Field description is required"
+        },
+        "options": {
+          "required": "Add at least one option",
+          "empty": "Options cannot be empty",
+          "duplicate": "Options must be unique",
+          "only_enum": "Only enum fields can have options"
+        }
       }
     },
     "billing": {

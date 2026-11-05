@@ -18,6 +18,7 @@ import {
 } from "@workspace/ui/components/tabs"
 import { AgentReferenceLink } from "@/components/agents/agent-reference-link"
 import { CallCostBreakdown } from "@/components/calls/call-cost-breakdown"
+import { CallExtraction } from "@/components/calls/call-extraction"
 import { CallRecordingPlayer } from "@/components/calls/call-recording-player"
 import { SheetSkeleton } from "@/components/sheet-skeleton"
 import { UserDateTime } from "@/components/user-timezone-provider"
@@ -31,6 +32,8 @@ function CallDetailBody({ callId }: { callId: string }) {
   const { data: call } = useSuspenseQuery({
     queryKey: ["calls", callId],
     queryFn: () => api.get<CallDetailResponse>(`/calls/${callId}`),
+    refetchInterval: (query) =>
+      query.state.data?.extractionStatus === "pending" ? 3000 : false,
   })
 
   const [position, setPosition] = useState<number>()
@@ -155,13 +158,8 @@ function CallDetailBody({ callId }: { callId: string }) {
           value="data"
           className="flex min-h-0 flex-col overflow-y-auto"
         >
-          {variables.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center">
-              <p className="text-sm text-muted-foreground">
-                {t("components.calls.call_detail_sheet.no_variables")}
-              </p>
-            </div>
-          ) : (
+          {call.extractionStatus ? <CallExtraction call={call} /> : null}
+          {variables.length > 0 ? (
             <div className="p-4">
               <div className="mb-4 font-medium">
                 {t("components.calls.call_detail_sheet.dynamic_variables")}
@@ -172,6 +170,12 @@ function CallDetailBody({ callId }: { callId: string }) {
                   <span className="text-right text-sm break-all">{value}</span>
                 </div>
               ))}
+            </div>
+          ) : call.extractionStatus ? null : (
+            <div className="flex flex-1 items-center justify-center">
+              <p className="text-sm text-muted-foreground">
+                {t("components.calls.call_detail_sheet.no_variables")}
+              </p>
             </div>
           )}
         </TabsContent>

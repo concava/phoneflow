@@ -33,6 +33,7 @@ export type FlowSidePanelState =
   | { kind: "global-prompt" }
   | { kind: "variables" }
   | { kind: "config" }
+  | { kind: "extraction" }
   | { kind: "node"; node: FlowNodeConfig }
   | { kind: "edge"; edge: FlowEdgeConfig }
 

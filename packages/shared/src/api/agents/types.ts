@@ -4,6 +4,7 @@ import type { AgentConfig } from "@workspace/shared/api/agent-config/types"
 import type {
   createAgentRequestSchema,
   publishAgentRequestSchema,
+  testExtractionRequestSchema,
   updateAgentConfigRequestSchema,
   updateAgentNameRequestSchema,
 } from "./schemas"
@@ -16,6 +17,7 @@ export type UpdateAgentConfigRequest = z.infer<
   typeof updateAgentConfigRequestSchema
 >
 export type PublishAgentRequest = z.infer<typeof publishAgentRequestSchema>
+export type TestExtractionRequest = z.infer<typeof testExtractionRequestSchema>
 
 export type AgentResponse = {
   id: string

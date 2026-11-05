@@ -1,6 +1,9 @@
 import { z } from "zod"
 
-import { agentConfigSchema } from "@workspace/shared/api/agent-config/schemas"
+import {
+  agentConfigSchema,
+  extractionFieldsSchema,
+} from "@workspace/shared/api/agent-config/schemas"
 
 const agentNameSchema = z
   .string()
@@ -34,3 +37,10 @@ export const publishAgentRequestSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
 })
+
+export const testExtractionRequestSchema = z
+  .object({
+    callId: z.uuid(),
+    fields: extractionFieldsSchema,
+  })
+  .strict()

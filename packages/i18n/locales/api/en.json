@@ -20,7 +20,8 @@
     "list_versions_failed": "Failed to load agent versions",
     "version_not_found": "Agent version not found",
     "load_version_config_failed": "Failed to load agent version config",
-    "publish_failed": "Failed to publish agent version"
+    "publish_failed": "Failed to publish agent version",
+    "extraction_test_failed": "The extraction test did not finish. Check that the worker is running and try again"
   },
   "batch_calls": {
     "list_failed": "Failed to load batch calls",
@@ -64,7 +65,11 @@
     "agent_not_found": "Agent not found",
     "insufficient_credits": "Insufficient credits",
     "agent_version_not_found": "Agent version not found",
-    "start_outbound_failed": "Failed to start outbound call"
+    "start_outbound_failed": "Failed to start outbound call",
+    "extraction_no_transcript": "This call has no transcript",
+    "extraction_not_configured": "This call's agent has no post-call extraction fields",
+    "extraction_already_running": "An extraction is already running for this call",
+    "extraction_rerun_failed": "Failed to rerun extraction"
   },
   "contacts": {
     "user_email_not_found": "User email not found",

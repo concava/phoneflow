@@ -8,6 +8,7 @@ import {
   agentVersionParamsSchema,
   createAgentRequestSchema,
   publishAgentRequestSchema,
+  testExtractionRequestSchema,
   updateAgentConfigRequestSchema,
   updateAgentNameRequestSchema,
 } from "@workspace/shared/api/agents/schemas"
@@ -23,9 +24,11 @@ import type {
   DuplicateAgentResponse,
   UpdateAgentNameResponse,
 } from "@workspace/shared/api/agents/types"
+import type { ExtractionResult } from "@workspace/shared/api/calls/types"
 import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { t } from "@/lib/i18n"
+import { runTestExtraction } from "@/lib/post-call"
 import { validator } from "@/lib/validator"
 
 export const agentRoutes = new Hono()
@@ -478,6 +481,67 @@ agentRoutes.post(
       return c.json(publishedVersion satisfies AgentVersionResponse, 201)
     } catch {
       return c.json({ error: t(locale, "agents.publish_failed") }, 500)
+    }
+  }
+)
+
+agentRoutes.post(
+  "/:id/extraction/test",
+  requireOrganization,
+  requirePermission({ agent: ["update"] }),
+  validator("param", agentIdParamsSchema),
+  validator("json", testExtractionRequestSchema),
+  async (c) => {
+    const locale = c.get("locale")
+    const organizationId = c.get("organizationId")
+    const { id: agentId } = c.req.valid("param")
+    const { callId, fields } = c.req.valid("json")
+
+    try {
+      const agent = await db.query.agentsTable.findFirst({
+        where: {
+          id: agentId,
+          organizationId,
+        },
+        columns: {
+          config: true,
+        },
+      })
+
+      if (!agent) {
+        return c.json({ error: t(locale, "agents.not_found") }, 404)
+      }
+
+      const call = await db.query.callsTable.findFirst({
+        where: {
+          id: callId,
+          organizationId,
+        },
+        columns: {
+          transcript: true,
+        },
+      })
+
+      if (!call) {
+        return c.json({ error: t(locale, "calls.not_found") }, 404)
+      }
+
+      if (!call.transcript?.length) {
+        return c.json(
+          { error: t(locale, "calls.extraction_no_transcript") },
+          400
+        )
+      }
+
+      const result = await runTestExtraction({
+        callId,
+        fields,
+        timezone: agent.config.timezone,
+      })
+
+      return c.json(result satisfies ExtractionResult)
+    } catch {
+      return c.json({ error: t(locale, "agents.extraction_test_failed") }, 500)
     }
   }
 )
