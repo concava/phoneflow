@@ -37,6 +37,8 @@ const resourceLabels = {
   ac: "components.settings.roles.role_dialog.resources.ac",
   agent: "components.settings.roles.role_dialog.resources.agent",
   phoneNumber: "components.settings.roles.role_dialog.resources.phone_number",
+  knowledgeBase:
+    "components.settings.roles.role_dialog.resources.knowledge_base",
   calls: "components.settings.roles.role_dialog.resources.calls",
   billing: "components.settings.roles.role_dialog.resources.billing",
 } satisfies Record<string, string>

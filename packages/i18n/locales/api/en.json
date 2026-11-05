@@ -20,7 +20,8 @@
     "list_versions_failed": "Failed to load agent versions",
     "version_not_found": "Agent version not found",
     "load_version_config_failed": "Failed to load agent version config",
-    "publish_failed": "Failed to publish agent version"
+    "publish_failed": "Failed to publish agent version",
+    "knowledge_base_not_found": "Node \"{{node}}\" uses a knowledge base that doesn't exist in this organization. Remove it from the node."
   },
   "batch_calls": {
     "list_failed": "Failed to load batch calls",
@@ -89,5 +90,25 @@
     "image_type_invalid": "Image must be JPEG, PNG, WebP, or GIF",
     "image_too_large": "Image must be 2MB or smaller",
     "upload_image_failed": "Failed to upload image"
+  },
+  "knowledge_bases": {
+    "list_failed": "Failed to load knowledge bases",
+    "create_failed": "Failed to create knowledge base",
+    "not_found": "Knowledge base not found",
+    "load_failed": "Failed to load knowledge base",
+    "delete_failed": "Failed to delete knowledge base",
+    "embeddings_not_configured": "Embeddings are not configured on this server. Set EMBEDDINGS_BASE_URL and EMBEDDINGS_MODEL to use knowledge bases.",
+    "embeddings_dimension_mismatch": "The embeddings model must return 1536 dimensions. Check EMBEDDINGS_MODEL.",
+    "document_required": "A file is required",
+    "document_type_invalid": "Only .txt and .md files are supported",
+    "document_too_large": "The file must be 2 MB or smaller",
+    "document_encoding_invalid": "The file must be valid UTF-8 text",
+    "document_empty": "The file has no text",
+    "document_not_found": "Document not found",
+    "document_in_progress": "The document is already being processed",
+    "upload_failed": "Failed to upload document",
+    "delete_document_failed": "Failed to delete document",
+    "reprocess_failed": "Failed to process document again",
+    "search_failed": "Failed to search the knowledge base"
   }
 }

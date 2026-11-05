@@ -42,6 +42,7 @@ import {
   createIvrNavigationDraft,
   IvrNavigationDialog,
 } from "./ivr-navigation-dialog"
+import { KnowledgeBasesField } from "./knowledge-bases-field"
 import { ToolPickerItem, ToolRow } from "./tool-row"
 import {
   createTransferCallDraft,
@@ -388,6 +389,8 @@ export function ConversationTools({ node }: ConversationToolsProps) {
           </PopoverContent>
         </Popover>
       </Field>
+
+      <KnowledgeBasesField node={node} />
 
       {endCallDialog ? (
         <EndCallDialog

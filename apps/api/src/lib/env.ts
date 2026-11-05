@@ -29,4 +29,7 @@ export const env = {
   PUBLIC_S3_URL: process.env.PUBLIC_S3_URL ?? "",
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "",
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  EMBEDDINGS_BASE_URL: process.env.EMBEDDINGS_BASE_URL ?? "",
+  EMBEDDINGS_API_KEY: process.env.EMBEDDINGS_API_KEY ?? "",
+  EMBEDDINGS_MODEL: process.env.EMBEDDINGS_MODEL ?? "",
 }

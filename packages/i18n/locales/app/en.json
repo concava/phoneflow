@@ -292,6 +292,10 @@
       "title": "Page not found",
       "description": "The page you're looking for doesn't exist or was moved",
       "return_home": "Return Home"
+    },
+    "knowledge_bases": {
+      "page_title": "Knowledge bases - Phoneflow",
+      "breadcrumb": "Knowledge bases"
     }
   },
   "components": {
@@ -1020,6 +1024,13 @@
               "all_attached": "All tools are already on this node",
               "new_webhook": "New webhook tool"
             }
+          },
+          "knowledge_bases": {
+            "label": "Knowledge bases",
+            "add": "Add knowledge base",
+            "remove": "Remove from node",
+            "deleted": "Deleted knowledge base",
+            "none": "No knowledge bases available"
           }
         }
       }
@@ -1831,7 +1842,8 @@
             "agent": "Agents",
             "phone_number": "Phone numbers",
             "calls": "Calls",
-            "billing": "Billing"
+            "billing": "Billing",
+            "knowledge_base": "Knowledge bases"
           },
           "actions": {
             "create": "create",
@@ -1901,7 +1913,8 @@
           "batch_calls": "Batch calls",
           "calls": "Calls",
           "contacts": "Contacts",
-          "settings": "Settings"
+          "settings": "Settings",
+          "knowledge_bases": "Knowledge bases"
         }
       },
       "sidebar_credits": {
@@ -1972,6 +1985,57 @@
       "deleted_agent": "Deleted agent",
       "deleted_phone_number": "Deleted phone number",
       "agent_version_draft": "Latest (draft)"
+    },
+    "knowledge_bases": {
+      "create_form": {
+        "trigger": "New knowledge base",
+        "title": "New knowledge base",
+        "description": "Add documents that your agents can look up during calls.",
+        "name": "Name"
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "documents": "Documents",
+          "created_at": "Created"
+        },
+        "delete_label": "Delete {{name}}",
+        "delete_dialog": {
+          "title": "Delete knowledge base",
+          "description": "This will permanently delete \"{{name}}\" and its documents. It will be removed from agent drafts, and published versions that use it will stop finding this information."
+        }
+      },
+      "sheet": {
+        "documents": "Documents",
+        "upload_placeholder": "Click or drop a .txt or .md file, up to 2 MB",
+        "too_large": "The file must be 2 MB or smaller",
+        "chunks_one": "{{count}} chunk",
+        "chunks_other": "{{count}} chunks",
+        "reprocess": "Process {{name}} again",
+        "delete_label": "Delete {{name}}",
+        "delete_dialog": {
+          "title": "Delete document",
+          "description": "This will permanently delete \"{{name}}\". Agents will stop finding its information."
+        },
+        "status": {
+          "pending": "Pending",
+          "processing": "Processing",
+          "ready": "Ready",
+          "failed": "Failed"
+        },
+        "errors": {
+          "embeddings_not_configured": "Embeddings are not configured on the worker. Set EMBEDDINGS_BASE_URL and EMBEDDINGS_MODEL.",
+          "embeddings_dimension_mismatch": "The embeddings model must return 1536 dimensions. Check EMBEDDINGS_MODEL.",
+          "embeddings_request_failed": "The embeddings provider returned an error. Try again later.",
+          "no_content": "The document has no text.",
+          "processing_failed": "The document could not be processed. Try again later."
+        },
+        "search": {
+          "label": "Test search",
+          "placeholder": "Ask a question...",
+          "no_results": "No matches found"
+        }
+      }
     }
   }
 }

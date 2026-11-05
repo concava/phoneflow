@@ -13,10 +13,12 @@ import type { CallSipConnection } from "@workspace/shared/api/calls/types"
 import { evaluateExpression } from "@/flow/expression"
 import {
   EXTRACT_INSTRUCTIONS,
+  KNOWLEDGE_INSTRUCTIONS,
   PLATFORM_INSTRUCTIONS,
   TRANSITION_INSTRUCTIONS,
 } from "@/flow/prompts"
 import { createSendDtmfTool } from "@/flow/tools/dtmf"
+import { createKnowledgeBaseTool } from "@/flow/tools/knowledge-base"
 import { createTransferCallTool } from "@/flow/tools/transfer-call"
 import { createWebhookTool } from "@/flow/tools/webhook"
 import type { FlowConversationNode, FlowGraph, FlowNode } from "@/flow/types"
@@ -40,6 +42,10 @@ function buildNodeInstructions(
 
   if (node.extractVariables) {
     parts.push(EXTRACT_INSTRUCTIONS)
+  }
+
+  if (node.knowledgeBaseIds?.length) {
+    parts.push(KNOWLEDGE_INSTRUCTIONS)
   }
 
   if (node.outgoingEdges.some((edge) => edge.condition.type === "prompt")) {
@@ -135,6 +141,10 @@ export class FlowAgent extends Agent {
           this.callId
         )
       )
+    }
+
+    if (node.knowledgeBaseIds?.length) {
+      tools.push(createKnowledgeBaseTool(node.knowledgeBaseIds, this.callId))
     }
 
     for (const toolId of node.toolIds ?? []) {

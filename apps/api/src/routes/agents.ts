@@ -26,6 +26,7 @@ import type {
 import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { t } from "@/lib/i18n"
+import { findNodeWithForeignKnowledgeBase } from "@/lib/knowledge"
 import { validator } from "@/lib/validator"
 
 export const agentRoutes = new Hono()
@@ -71,6 +72,21 @@ agentRoutes.post(
 
     try {
       const payload = c.req.valid("json")
+
+      const foreignNode = await findNodeWithForeignKnowledgeBase(
+        payload.config,
+        organizationId
+      )
+      if (foreignNode !== null) {
+        return c.json(
+          {
+            error: t(locale, "agents.knowledge_base_not_found", {
+              node: foreignNode,
+            }),
+          },
+          400
+        )
+      }
 
       const [agent] = await db
         .insert(agentsTable)
@@ -269,6 +285,21 @@ agentRoutes.patch(
     try {
       const payload = c.req.valid("json")
 
+      const foreignNode = await findNodeWithForeignKnowledgeBase(
+        payload.config,
+        organizationId
+      )
+      if (foreignNode !== null) {
+        return c.json(
+          {
+            error: t(locale, "agents.knowledge_base_not_found", {
+              node: foreignNode,
+            }),
+          },
+          400
+        )
+      }
+
       const [agent] = await db
         .update(agentsTable)
         .set({
@@ -423,7 +454,7 @@ agentRoutes.post(
     try {
       const payload = c.req.valid("json")
 
-      const publishedVersion = await db.transaction(async (tx) => {
+      const published = await db.transaction(async (tx) => {
         const agent = await tx.query.agentsTable.findFirst({
           where: {
             id: agentId,
@@ -433,6 +464,15 @@ agentRoutes.post(
 
         if (!agent) {
           return null
+        }
+
+        const foreignNode = await findNodeWithForeignKnowledgeBase(
+          agent.config,
+          organizationId,
+          tx
+        )
+        if (foreignNode !== null) {
+          return { foreignNode }
         }
 
         const latestVersion = await tx.query.agentVersionsTable.findFirst({
@@ -468,14 +508,25 @@ agentRoutes.post(
             createdAt: agentVersionsTable.createdAt,
           })
 
-        return version
+        return { version }
       })
 
-      if (!publishedVersion) {
+      if (!published) {
         return c.json({ error: t(locale, "agents.not_found") }, 404)
       }
 
-      return c.json(publishedVersion satisfies AgentVersionResponse, 201)
+      if ("foreignNode" in published) {
+        return c.json(
+          {
+            error: t(locale, "agents.knowledge_base_not_found", {
+              node: published.foreignNode,
+            }),
+          },
+          400
+        )
+      }
+
+      return c.json(published.version satisfies AgentVersionResponse, 201)
     } catch {
       return c.json({ error: t(locale, "agents.publish_failed") }, 500)
     }

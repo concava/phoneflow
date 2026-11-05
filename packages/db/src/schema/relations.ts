@@ -17,6 +17,11 @@ import {
 import { callsTable } from "@workspace/db/schema/calls"
 import { contactsTable } from "@workspace/db/schema/contacts"
 import { creditPurchasesTable } from "@workspace/db/schema/credits"
+import {
+  knowledgeBasesTable,
+  knowledgeChunksTable,
+  knowledgeDocumentsTable,
+} from "@workspace/db/schema/knowledge-bases"
 import { phoneNumbersTable } from "@workspace/db/schema/phone-numbers"
 
 export const relations = defineRelations(
@@ -28,6 +33,9 @@ export const relations = defineRelations(
     callsTable,
     contactsTable,
     creditPurchasesTable,
+    knowledgeBasesTable,
+    knowledgeChunksTable,
+    knowledgeDocumentsTable,
     phoneNumbersTable,
     user,
     session,
@@ -138,6 +146,36 @@ export const relations = defineRelations(
         to: r.callsTable.contactId,
       }),
     },
+    knowledgeBasesTable: {
+      organization: r.one.organization({
+        from: r.knowledgeBasesTable.organizationId,
+        to: r.organization.id,
+      }),
+      documents: r.many.knowledgeDocumentsTable({
+        from: r.knowledgeBasesTable.id,
+        to: r.knowledgeDocumentsTable.knowledgeBaseId,
+      }),
+    },
+    knowledgeDocumentsTable: {
+      organization: r.one.organization({
+        from: r.knowledgeDocumentsTable.organizationId,
+        to: r.organization.id,
+      }),
+      knowledgeBase: r.one.knowledgeBasesTable({
+        from: r.knowledgeDocumentsTable.knowledgeBaseId,
+        to: r.knowledgeBasesTable.id,
+      }),
+      chunks: r.many.knowledgeChunksTable({
+        from: r.knowledgeDocumentsTable.id,
+        to: r.knowledgeChunksTable.documentId,
+      }),
+    },
+    knowledgeChunksTable: {
+      document: r.one.knowledgeDocumentsTable({
+        from: r.knowledgeChunksTable.documentId,
+        to: r.knowledgeDocumentsTable.id,
+      }),
+    },
     phoneNumbersTable: {
       organization: r.one.organization({
         from: r.phoneNumbersTable.organizationId,
@@ -224,6 +262,10 @@ export const relations = defineRelations(
       creditPurchases: r.many.creditPurchasesTable({
         from: r.organization.id,
         to: r.creditPurchasesTable.organizationId,
+      }),
+      knowledgeBases: r.many.knowledgeBasesTable({
+        from: r.organization.id,
+        to: r.knowledgeBasesTable.organizationId,
       }),
     },
     creditPurchasesTable: {
