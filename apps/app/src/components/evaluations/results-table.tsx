@@ -230,7 +230,10 @@ export function ResultsTable({
   const selectable = results.filter(isSelectable)
   const selected = selectable.filter((result) => selectedIds.has(result.id))
   const hasRejudgeableFailures = results.some(
-    (result) => result.status === "failed" && result.callId
+    (result) =>
+      result.status === "failed" &&
+      result.error !== "cancelled" &&
+      result.callId
   )
   const allSelected =
     selectable.length > 0 && selected.length === selectable.length

@@ -1,4 +1,14 @@
-import { and, desc, eq, gte, inArray, isNotNull, lte, sql } from "drizzle-orm"
+import {
+  and,
+  desc,
+  eq,
+  gte,
+  inArray,
+  isNotNull,
+  lte,
+  ne,
+  sql,
+} from "drizzle-orm"
 import { Hono } from "hono"
 
 import { db } from "@workspace/db/client"
@@ -576,7 +586,10 @@ evaluationRoutes.post(
                       "failed",
                     ])
                   )
-                : eq(evaluationResultsTable.status, "failed")
+                : and(
+                    eq(evaluationResultsTable.status, "failed"),
+                    ne(evaluationResultsTable.error, "cancelled")
+                  )
             )
           )
           .returning({
