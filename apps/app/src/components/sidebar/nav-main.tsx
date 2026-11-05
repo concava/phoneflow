@@ -1,5 +1,6 @@
 import { Link, useMatchRoute } from "@tanstack/react-router"
 import {
+  ChartColumnIcon,
   HistoryIcon,
   PhoneIcon,
   PhoneOutgoingIcon,
@@ -47,6 +48,11 @@ const nav = {
     {
       title: "components.sidebar.nav_main.sections.monitor",
       items: [
+        {
+          title: "components.sidebar.nav_main.items.analytics",
+          url: "/analytics",
+          icon: <ChartColumnIcon />,
+        },
         {
           title: "components.sidebar.nav_main.items.calls",
           url: "/calls",

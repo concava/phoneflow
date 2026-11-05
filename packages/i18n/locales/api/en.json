@@ -64,7 +64,8 @@
     "agent_not_found": "Agent not found",
     "insufficient_credits": "Insufficient credits",
     "agent_version_not_found": "Agent version not found",
-    "start_outbound_failed": "Failed to start outbound call"
+    "start_outbound_failed": "Failed to start outbound call",
+    "analytics_failed": "Failed to load call analytics"
   },
   "contacts": {
     "user_email_not_found": "User email not found",
