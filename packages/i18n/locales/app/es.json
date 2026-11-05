@@ -503,6 +503,20 @@
             "timezone": {
               "label": "Zona horaria",
               "description": "Se usa para {{date}}, {{time}} y {{timezone}}"
+            },
+            "recording": {
+              "label": "Grabación de llamadas",
+              "description": "Graba las llamadas de este agente cuando el almacenamiento privado está configurado. El texto de aviso y la lista de prefijos son solo herramientas: por sí solos no hacen que un despliegue cumpla la ley.",
+              "disclosure": {
+                "label": "Aviso de grabación",
+                "description": "Se reproduce antes de la primera frase del agente, sin interrupciones, en las llamadas que se graban. Déjalo vacío para omitirlo",
+                "placeholder": "Esta llamada se está grabando."
+              },
+              "excluded_prefixes": {
+                "label": "Prefijos excluidos",
+                "description": "No se graban las llamadas telefónicas hacia o desde números que empiecen por estos prefijos. Sepáralos con comas. Si hay una lista y el número del interlocutor está oculto o no tiene formato internacional, la llamada no se graba. Las llamadas web no tienen número, así que la lista no se les aplica",
+                "placeholder": "+1212, +34"
+              }
             }
           },
           "model_tab": {
@@ -1186,7 +1200,8 @@
         "play": "Reproducir",
         "pause": "Pausar",
         "playback_rate": "Velocidad de reproducción",
-        "download_audio": "Audio"
+        "download_audio": "Audio",
+        "load_failed": "No se ha podido cargar la grabación"
       },
       "call_cost_breakdown": {
         "items": {

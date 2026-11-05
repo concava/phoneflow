@@ -54,6 +54,7 @@
     "organization_not_found": "Organización no encontrada",
     "request_download_failed": "No se pudo solicitar la descarga de llamadas",
     "load_recording_failed": "No se pudo obtener la grabación",
+    "recording_not_found": "Esta llamada no tiene grabación",
     "not_in_progress": "La llamada no está en curso",
     "join_failed": "No se pudo unir a la llamada",
     "end_failed": "No se pudo finalizar la llamada",

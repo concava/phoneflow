@@ -54,6 +54,7 @@
     "organization_not_found": "Organization not found",
     "request_download_failed": "Failed to request calls download",
     "load_recording_failed": "Failed to fetch recording",
+    "recording_not_found": "This call has no recording",
     "not_in_progress": "Call is not in progress",
     "join_failed": "Failed to join call",
     "end_failed": "Failed to end call",

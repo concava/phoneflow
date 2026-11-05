@@ -503,6 +503,20 @@
             "timezone": {
               "label": "Timezone",
               "description": "Used for {{date}}, {{time}}, and {{timezone}}"
+            },
+            "recording": {
+              "label": "Call recording",
+              "description": "Records this agent's calls when private storage is configured. The disclosure text and the prefix list are tools only: they do not by themselves make a deployment legally compliant.",
+              "disclosure": {
+                "label": "Recording disclosure",
+                "description": "Spoken before the agent's first line, without interruptions, on calls that are being recorded. Leave empty to skip it",
+                "placeholder": "This call is being recorded."
+              },
+              "excluded_prefixes": {
+                "label": "Excluded prefixes",
+                "description": "Phone calls to or from numbers starting with these prefixes are not recorded. Separate them with commas. If a list is set and the other party's number is hidden or not in international format, the call is not recorded. Web calls have no number, so the list does not apply to them",
+                "placeholder": "+1212, +34"
+              }
             }
           },
           "model_tab": {
@@ -1186,7 +1200,8 @@
         "play": "Play",
         "pause": "Pause",
         "playback_rate": "Playback speed",
-        "download_audio": "Audio"
+        "download_audio": "Audio",
+        "load_failed": "Could not load the recording"
       },
       "call_cost_breakdown": {
         "items": {

@@ -63,6 +63,16 @@
           "duplicate_key": "Clave de variable duplicada"
         }
       },
+      "call_recording": {
+        "disclosure": {
+          "required": "El aviso de grabación no puede estar vacío"
+        },
+        "excluded_prefixes": {
+          "format": "Los prefijos excluidos deben ser un + seguido de 1 a 14 dígitos",
+          "max": "Añade como máximo 200 prefijos excluidos",
+          "duplicate": "Prefijo excluido duplicado"
+        }
+      },
       "transfer_call_destination": {
         "condition": {
           "required": "La condición es obligatoria"

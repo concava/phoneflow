@@ -23,6 +23,12 @@ function formatTick(seconds: number) {
   return `${minutes}:${secs}.${fraction}`
 }
 
+// wavesurfer only exposes the HTTP status in its error message. If that wording
+// ever changes, a missing recording shows the load error instead of hiding.
+function isRecordingMissing(error: Error) {
+  return error.message.includes(": 404 ")
+}
+
 export function CallRecordingPlayer({
   callId,
   position,
@@ -36,6 +42,7 @@ export function CallRecordingPlayer({
   const containerRef = useRef<HTMLDivElement>(null)
   const fetchParams = useRef({ credentials: "include" as const }).current
   const [playbackRate, setPlaybackRate] = useState(1)
+  const [loadError, setLoadError] = useState<"missing" | "failed" | null>(null)
 
   const { wavesurfer, isReady, isPlaying } = useWavesurfer({
     container: containerRef,
@@ -52,6 +59,13 @@ export function CallRecordingPlayer({
   })
 
   useEffect(() => {
+    if (!wavesurfer || isReady) return
+    return wavesurfer.on("error", (error) => {
+      setLoadError(isRecordingMissing(error) ? "missing" : "failed")
+    })
+  }, [wavesurfer, isReady])
+
+  useEffect(() => {
     if (!wavesurfer || !isReady || position == null) return
     const fileTime = Math.min(
       wavesurfer.getDuration(),
@@ -61,7 +75,7 @@ export function CallRecordingPlayer({
   }, [wavesurfer, isReady, position, recordingOffset])
 
   useEffect(() => {
-    if (!wavesurfer) return
+    if (!wavesurfer || loadError) return
 
     wavesurfer.registerPlugin(
       Timeline.create({
@@ -95,7 +109,7 @@ export function CallRecordingPlayer({
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [wavesurfer, recordingOffset])
+  }, [wavesurfer, recordingOffset, loadError])
 
   function onPlayPause() {
     void wavesurfer?.playPause()
@@ -119,8 +133,18 @@ export function CallRecordingPlayer({
     link.click()
   }
 
+  if (loadError === "missing") return null
+
+  if (loadError === "failed") {
+    return (
+      <p className="mt-2 text-sm text-muted-foreground">
+        {t("components.calls.call_recording_player.load_failed")}
+      </p>
+    )
+  }
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="mt-2 flex flex-col gap-2">
       <div className="flex items-center space-x-1.5">
         <Button
           type="button"

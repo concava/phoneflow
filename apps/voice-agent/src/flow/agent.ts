@@ -55,13 +55,15 @@ export class FlowAgent extends Agent {
   private readonly sip: CallSipConnection | null
   private readonly callId: string
   private readonly room: JobContext["room"]
+  private readonly recordingDisclosure: string | undefined
 
   constructor(
     graph: FlowGraph,
     variables: Variables,
     sip: CallSipConnection | null,
     callId: string,
-    room: JobContext["room"]
+    room: JobContext["room"],
+    recordingDisclosure?: string
   ) {
     super({
       instructions: buildNodeInstructions(graph, graph.startNode, variables),
@@ -72,6 +74,7 @@ export class FlowAgent extends Agent {
     this.sip = sip
     this.callId = callId
     this.room = room
+    this.recordingDisclosure = recordingDisclosure
   }
 
   private async publishActiveNode(node: FlowNode) {
@@ -224,10 +227,21 @@ export class FlowAgent extends Agent {
     }
   }
 
+  private async speakRecordingDisclosure() {
+    if (!this.recordingDisclosure) return
+
+    await this.session
+      .say(this.variables.replace(this.recordingDisclosure), {
+        allowInterruptions: false,
+      })
+      .waitForPlayout()
+  }
+
   override async onEnter() {
     const startNode = this.graph.startNode
     await this.publishActiveNode(startNode)
     await this.updateTools(this.buildNodeTools(startNode))
+    await this.speakRecordingDisclosure()
 
     if (startNode.startSpeaker === "agent") {
       await this.enterNode(startNode)
