@@ -190,6 +190,18 @@
           "required_with_username": "SIP password is required when a username is set"
         }
       }
+    },
+    "webhooks": {
+      "webhook_request": {
+        "url": {
+          "max": "URL must be at most 2048 characters",
+          "invalid": "Enter a valid http or https URL",
+          "credentials": "URL cannot contain a username or password"
+        },
+        "events": {
+          "min": "Select at least one event"
+        }
+      }
     }
   }
 }

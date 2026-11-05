@@ -54,6 +54,7 @@ import {
 } from "@/lib/livekit"
 import { emailsQueue } from "@/lib/queues"
 import { validator } from "@/lib/validator"
+import { emitCallEvent } from "@/lib/webhooks"
 
 export const callRoutes = new Hono()
 
@@ -172,9 +173,11 @@ callRoutes.post(
           livekitRoomName: payload.livekitRoomName,
           startedAt: new Date(payload.startedAt),
         })
-        .returning({ id: callsTable.id })
+        .returning()
 
       await startCallRecording(payload.livekitRoomName, call.id)
+
+      emitCallEvent("call.started", call)
 
       return c.json(
         {
@@ -259,9 +262,11 @@ callRoutes.post(
           livekitRoomName: payload.livekitRoomName,
           startedAt: new Date(payload.startedAt),
         })
-        .returning({ id: callsTable.id })
+        .returning()
 
       await startCallRecording(payload.livekitRoomName, call.id)
+
+      emitCallEvent("call.started", call)
 
       return c.json(
         {
@@ -341,9 +346,11 @@ callRoutes.post(
           startedAt: new Date(payload.startedAt),
           batchCallId: payload.batchCallId,
         })
-        .returning({ id: callsTable.id })
+        .returning()
 
       await startCallRecording(payload.livekitRoomName, call.id)
+
+      emitCallEvent("call.started", call)
 
       return c.json(
         {
@@ -416,7 +423,9 @@ callRoutes.post(
             : {}),
           batchCallId: payload.batchCallId,
         })
-        .returning({ id: callsTable.id })
+        .returning()
+
+      emitCallEvent("call.no_answer", call)
 
       if (contactId) {
         await recordContactCall(contactId, startedAt, 0)
@@ -493,6 +502,8 @@ callRoutes.post(
         })
         .where(eq(callsTable.id, payload.callId))
         .returning()
+
+      emitCallEvent("call.completed", updated)
 
       if (call.contactId) {
         await recordContactCall(call.contactId, call.startedAt, durationMs)

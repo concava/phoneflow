@@ -23,7 +23,8 @@
     "bullmq": "catalog:",
     "bullmq-otel": "catalog:",
     "dotenv": "catalog:",
-    "ioredis": "catalog:"
+    "ioredis": "catalog:",
+    "undici": "^7.29.0"
   },
   "devDependencies": {
     "@types/node": "catalog:",

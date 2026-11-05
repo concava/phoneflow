@@ -41,6 +41,7 @@ import { Route as authorizedorganizationsidebarSettingsMembersPageRouteImport } 
 import { Route as authorizedorganizationsidebarSettingsOrganizationPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/organization/page'
 import { Route as authorizedorganizationsidebarSettingsRolesPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/roles/page'
 import { Route as authorizedorganizationsidebarSettingsSsoPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/sso/page'
+import { Route as authorizedorganizationsidebarSettingsWebhooksPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/webhooks/page'
 
 const authorizedLayoutRoute = authorizedLayoutRouteImport.update({
   id: '/(authorized)',
@@ -226,6 +227,12 @@ const authorizedorganizationsidebarSettingsSsoPageRoute =
     path: '/sso/',
     getParentRoute: () => authorizedorganizationsidebarSettingsLayoutRoute,
   } as any)
+const authorizedorganizationsidebarSettingsWebhooksPageRoute =
+  authorizedorganizationsidebarSettingsWebhooksPageRouteImport.update({
+    id: '/webhooks/',
+    path: '/webhooks/',
+    getParentRoute: () => authorizedorganizationsidebarSettingsLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/create-organization/': typeof authorizedCreateOrganizationPageRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/settings/roles/': typeof authorizedorganizationsidebarSettingsRolesPageRoute
   '/settings/sso/': typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  '/settings/webhooks/': typeof authorizedorganizationsidebarSettingsWebhooksPageRoute
 }
 export interface FileRoutesByTo {
   '/create-organization': typeof authorizedCreateOrganizationPageRoute
@@ -285,6 +293,7 @@ export interface FileRoutesByTo {
   '/settings/organization': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/settings/roles': typeof authorizedorganizationsidebarSettingsRolesPageRoute
   '/settings/sso': typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  '/settings/webhooks': typeof authorizedorganizationsidebarSettingsWebhooksPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -320,6 +329,7 @@ export interface FileRoutesById {
   '/(authorized)/(organization)/(sidebar)/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/roles/': typeof authorizedorganizationsidebarSettingsRolesPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/sso/': typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  '/(authorized)/(organization)/(sidebar)/settings/webhooks/': typeof authorizedorganizationsidebarSettingsWebhooksPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/settings/organization/'
     | '/settings/roles/'
     | '/settings/sso/'
+    | '/settings/webhooks/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/create-organization'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/settings/roles'
     | '/settings/sso'
+    | '/settings/webhooks'
   id:
     | '__root__'
     | '/(authorized)'
@@ -415,6 +427,7 @@ export interface FileRouteTypes {
     | '/(authorized)/(organization)/(sidebar)/settings/organization/'
     | '/(authorized)/(organization)/(sidebar)/settings/roles/'
     | '/(authorized)/(organization)/(sidebar)/settings/sso/'
+    | '/(authorized)/(organization)/(sidebar)/settings/webhooks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -648,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authorizedorganizationsidebarSettingsSsoPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarSettingsLayoutRoute
     }
+    '/(authorized)/(organization)/(sidebar)/settings/webhooks/': {
+      id: '/(authorized)/(organization)/(sidebar)/settings/webhooks/'
+      path: '/webhooks'
+      fullPath: '/settings/webhooks/'
+      preLoaderRoute: typeof authorizedorganizationsidebarSettingsWebhooksPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarSettingsLayoutRoute
+    }
   }
 }
 
@@ -659,6 +679,7 @@ interface authorizedorganizationsidebarSettingsLayoutRouteChildren {
   authorizedorganizationsidebarSettingsOrganizationPageRoute: typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   authorizedorganizationsidebarSettingsRolesPageRoute: typeof authorizedorganizationsidebarSettingsRolesPageRoute
   authorizedorganizationsidebarSettingsSsoPageRoute: typeof authorizedorganizationsidebarSettingsSsoPageRoute
+  authorizedorganizationsidebarSettingsWebhooksPageRoute: typeof authorizedorganizationsidebarSettingsWebhooksPageRoute
 }
 
 const authorizedorganizationsidebarSettingsLayoutRouteChildren: authorizedorganizationsidebarSettingsLayoutRouteChildren =
@@ -677,6 +698,8 @@ const authorizedorganizationsidebarSettingsLayoutRouteChildren: authorizedorgani
       authorizedorganizationsidebarSettingsRolesPageRoute,
     authorizedorganizationsidebarSettingsSsoPageRoute:
       authorizedorganizationsidebarSettingsSsoPageRoute,
+    authorizedorganizationsidebarSettingsWebhooksPageRoute:
+      authorizedorganizationsidebarSettingsWebhooksPageRoute,
   }
 
 const authorizedorganizationsidebarSettingsLayoutRouteWithChildren =

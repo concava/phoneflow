@@ -79,7 +79,8 @@
           "billing": "Billing",
           "members": "Members",
           "roles": "Roles",
-          "sso": "Single sign-on"
+          "sso": "Single sign-on",
+          "webhooks": "Webhooks"
         },
         "breadcrumb": "Settings"
       },
@@ -106,6 +107,9 @@
       },
       "roles": {
         "page_title": "Roles settings - Phoneflow"
+      },
+      "webhooks": {
+        "page_title": "Webhooks settings - Phoneflow"
       }
     },
     "signin": {
@@ -1831,7 +1835,8 @@
             "agent": "Agents",
             "phone_number": "Phone numbers",
             "calls": "Calls",
-            "billing": "Billing"
+            "billing": "Billing",
+            "webhook": "Webhooks"
           },
           "actions": {
             "create": "create",
@@ -1884,6 +1889,92 @@
             "placeholder": "Search roles..."
           },
           "create": "Create role"
+        }
+      },
+      "webhooks": {
+        "no_permission": "You don't have permission to view webhooks. Ask an organization admin for access.",
+        "events": {
+          "call_started": "Call started",
+          "call_completed": "Call completed",
+          "call_no_answer": "Call not answered",
+          "webhook_test": "Test event"
+        },
+        "table": {
+          "description": "Send signed call events to your own systems.",
+          "create": "Add webhook",
+          "empty": "No webhooks yet",
+          "toggle_enabled": "Enable or disable {{url}}",
+          "columns": {
+            "url": "URL",
+            "events": "Events",
+            "secret": "Signing secret",
+            "enabled": "Enabled"
+          }
+        },
+        "form": {
+          "create_title": "Add webhook",
+          "edit_title": "Edit webhook",
+          "description": "Phoneflow sends a signed POST request to this URL when a selected event happens. Payloads include call transcripts and phone numbers.",
+          "url": {
+            "label": "Endpoint URL"
+          },
+          "events": {
+            "label": "Events",
+            "description": "Choose which events this endpoint receives."
+          }
+        },
+        "secret": {
+          "title": "Signing secret",
+          "description": "Copy this secret and store it somewhere safe. You won't be able to see it again.",
+          "done": "Done"
+        },
+        "actions": {
+          "open_actions": "Open actions for {{url}}",
+          "send_test": "Send test event",
+          "view_deliveries": "View deliveries",
+          "rotate_secret": "Rotate secret",
+          "toasts": {
+            "test_sent": "Test event sent",
+            "deleted": "Webhook deleted"
+          },
+          "rotate_dialog": {
+            "title": "Rotate signing secret?",
+            "description": "The current secret stops working immediately, including for deliveries that are still being retried. Update your receiver right away.",
+            "confirm": "Rotate secret"
+          },
+          "delete_dialog": {
+            "title": "Delete webhook?",
+            "description": "{{url}} will stop receiving events and its delivery history will be deleted. This can't be undone."
+          }
+        },
+        "deliveries": {
+          "title": "Deliveries",
+          "empty": "No deliveries yet",
+          "previous": "Previous page",
+          "next": "Next page",
+          "columns": {
+            "event": "Event",
+            "status": "Status",
+            "result": "Result",
+            "attempts": "Attempts",
+            "created": "Created"
+          },
+          "status": {
+            "pending": "Pending",
+            "succeeded": "Succeeded",
+            "failed": "Failed"
+          },
+          "errors": {
+            "blocked_address": "Blocked: the destination address is not allowed",
+            "endpoint_disabled": "Not sent: the endpoint is disabled",
+            "http_status": "The endpoint responded with HTTP {{statusCode}}",
+            "https_required": "Blocked: the URL must use https",
+            "invalid_url": "The URL is not valid",
+            "network_error": "Could not connect to the endpoint",
+            "queue_unavailable": "Could not queue the delivery",
+            "redirect_not_followed": "Redirect not followed (HTTP {{statusCode}})",
+            "timeout": "The endpoint did not respond in 10 seconds"
+          }
         }
       }
     },

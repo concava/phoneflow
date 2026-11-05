@@ -10,6 +10,7 @@ const statement = {
   phoneNumber: ["create", "update", "delete"],
   calls: ["create"],
   billing: ["purchase"],
+  webhook: ["create", "read", "update", "delete"],
 }
 
 export const ac = createAccessControl(statement)
@@ -20,4 +21,5 @@ export const owner = ac.newRole({
   phoneNumber: ["create", "update", "delete"],
   calls: ["create"],
   billing: ["purchase"],
+  webhook: ["create", "read", "update", "delete"],
 })

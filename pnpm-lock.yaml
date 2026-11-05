@@ -488,6 +488,9 @@ importers:
       ioredis:
         specifier: 'catalog:'
         version: 6.0.0
+      undici:
+        specifier: ^7.29.0
+        version: 7.29.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'

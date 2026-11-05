@@ -190,6 +190,18 @@
           "required_with_username": "La contraseña SIP es obligatoria cuando se indica un usuario"
         }
       }
+    },
+    "webhooks": {
+      "webhook_request": {
+        "url": {
+          "max": "La URL debe tener como máximo 2048 caracteres",
+          "invalid": "Introduce una URL http o https válida",
+          "credentials": "La URL no puede incluir usuario ni contraseña"
+        },
+        "events": {
+          "min": "Selecciona al menos un evento"
+        }
+      }
     }
   }
 }

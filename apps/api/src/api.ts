@@ -14,6 +14,7 @@ import { phoneNumberRoutes } from "@/routes/phone-numbers"
 import { ssoRoutes } from "@/routes/sso"
 import { tokenRoutes } from "@/routes/token"
 import { userRoutes } from "@/routes/user"
+import { webhookRoutes } from "@/routes/webhooks"
 
 const api = new Hono()
 
@@ -50,6 +51,7 @@ api.route("/api/phone-numbers", phoneNumberRoutes)
 api.route("/api/sso", ssoRoutes)
 api.route("/api/token", tokenRoutes)
 api.route("/api/user", userRoutes)
+api.route("/api/webhooks", webhookRoutes)
 if (env.IS_CLOUD) {
   api.route("/api/billing", billingRoutes)
 }
