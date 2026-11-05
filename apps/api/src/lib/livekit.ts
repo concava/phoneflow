@@ -257,10 +257,12 @@ type OutboundCall = {
 
 export async function placeOutboundCall(call: OutboundCall) {
   const roomName = `${ROOM_PREFIX}${crypto.randomUUID()}`
+  const callId = crypto.randomUUID()
 
   const dispatch = createAgentDispatchClient()
   await dispatch.createDispatch(roomName, env.LIVEKIT_AGENT_NAME, {
     metadata: JSON.stringify({
+      callId,
       direction: "outbound",
       agentId: call.agentId,
       agentVersionId: call.agentVersionId,
@@ -289,4 +291,6 @@ export async function placeOutboundCall(call: OutboundCall) {
       authPassword: call.sipPassword,
     })
   )
+
+  return { callId }
 }

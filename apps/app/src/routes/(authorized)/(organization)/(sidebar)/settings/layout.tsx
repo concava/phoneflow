@@ -59,6 +59,10 @@ const settingsNavItems = [
     title: "routes.settings.layout.nav.sso",
     to: "/settings/sso",
   },
+  {
+    title: "routes.settings.layout.nav.api_keys",
+    to: "/settings/api-keys",
+  },
 ]
 
 function SettingsContentSkeleton() {

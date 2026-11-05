@@ -37,6 +37,7 @@ export async function startCall(
         "/calls/start/outbound",
         {
           body: {
+            callId: metadata.callId,
             agentId: metadata.agentId,
             agentVersionId: metadata.agentVersionId ?? null,
             fromNumber: metadata.fromNumber,
@@ -115,6 +116,7 @@ export async function recordUnansweredCall(
     "/calls/unanswered",
     {
       body: {
+        callId: metadata.callId,
         agentId: metadata.agentId,
         agentVersionId: metadata.agentVersionId ?? null,
         fromNumber: metadata.fromNumber,

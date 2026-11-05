@@ -23,6 +23,7 @@ export type CallStatus = "in_progress" | "completed" | "no_answer"
 export type CallVariableValues = Record<string, string>
 
 export type CallDispatchMetadata = {
+  callId?: string
   direction?: CallDirection
   agentId?: string
   agentVersionId?: string | null

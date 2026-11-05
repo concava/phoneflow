@@ -14,4 +14,5 @@ Build voice agents by connecting nodes, deploy them to handle inbound and outbou
 - **Phone numbers**: Import numbers from any provider (Twilio, Telnyx, Zadarma, …) by filling in the number and its SIP credentials.
 - **Inbound and outbound calls**: Route incoming calls to a chosen agent and version, and trigger outbound calls to any number with any agent and version.
 - **Call monitoring**: Watch every call in real time with visibility into start time, duration, cost (broken down by model), channel (phone or web), direction (inbound or outbound), from/to numbers, and the agent and version that answered.
+- **API keys and public REST API**: Create organization API keys and place calls, run batches and read results from your own systems. See the [API docs](docs/api.md).
 

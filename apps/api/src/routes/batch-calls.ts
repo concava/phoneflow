@@ -2,10 +2,7 @@ import { eq } from "drizzle-orm"
 import { Hono } from "hono"
 
 import { db } from "@workspace/db/client"
-import {
-  batchCallRecipientsTable,
-  batchCallsTable,
-} from "@workspace/db/schema/batch-calls"
+import { batchCallsTable } from "@workspace/db/schema/batch-calls"
 import {
   batchCallIdParamsSchema,
   createBatchCallRequestSchema,
@@ -15,15 +12,14 @@ import type {
   CreateBatchCallResponse,
   TriggerBatchCallResponse,
 } from "@workspace/shared/api/batch-calls/types"
-import type { ProcessBatchCallPayload } from "@workspace/shared/jobs/batch-calls/types"
 import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { requireAuthToken } from "@/lib/auth/token"
+import { createBatchCall } from "@/lib/batch-calls"
 import { organizationHasCredits } from "@/lib/credits"
 import { env } from "@/lib/env"
 import { t } from "@/lib/i18n"
 import { placeOutboundCall } from "@/lib/livekit"
-import { batchCallsQueue } from "@/lib/queues"
 import { validator } from "@/lib/validator"
 
 export const batchCallRoutes = new Hono()
@@ -76,122 +72,15 @@ batchCallRoutes.post(
     const payload = c.req.valid("json")
 
     try {
-      const phoneNumber = await db.query.phoneNumbersTable.findFirst({
-        where: {
-          id: payload.phoneNumberId,
-          organizationId,
-        },
-        columns: {
-          id: true,
-          sipAddress: true,
-          sipUsername: true,
-          sipPassword: true,
-        },
-      })
+      const result = await createBatchCall(organizationId, payload)
 
-      if (!phoneNumber) {
-        return c.json(
-          { error: t(locale, "batch_calls.phone_number_not_found") },
-          404
-        )
+      if (!result.ok) {
+        return c.json({ error: t(locale, result.error) }, result.status)
       }
 
-      if (
-        !phoneNumber.sipAddress ||
-        !phoneNumber.sipUsername ||
-        !phoneNumber.sipPassword
-      ) {
-        return c.json(
-          { error: t(locale, "batch_calls.phone_number_without_sip") },
-          400
-        )
-      }
-
-      const agent = await db.query.agentsTable.findFirst({
-        where: {
-          id: payload.agentId,
-          organizationId,
-        },
-        columns: {
-          id: true,
-        },
-      })
-
-      if (!agent) {
-        return c.json({ error: t(locale, "batch_calls.agent_not_found") }, 404)
-      }
-
-      if (env.IS_CLOUD && !(await organizationHasCredits(organizationId))) {
-        return c.json(
-          { error: t(locale, "batch_calls.insufficient_credits") },
-          402
-        )
-      }
-
-      if (payload.agentVersionId) {
-        const version = await db.query.agentVersionsTable.findFirst({
-          where: {
-            id: payload.agentVersionId,
-            agentId: payload.agentId,
-          },
-          columns: {
-            id: true,
-          },
-        })
-
-        if (!version) {
-          return c.json(
-            {
-              error: t(locale, "batch_calls.agent_version_not_found"),
-            },
-            404
-          )
-        }
-      }
-
-      const scheduledAt = payload.scheduledAt
-        ? new Date(payload.scheduledAt)
-        : null
-
-      if (scheduledAt && scheduledAt.getTime() <= Date.now()) {
-        return c.json(
-          { error: t(locale, "batch_calls.scheduled_at_in_past") },
-          400
-        )
-      }
-
-      const batchCallId = crypto.randomUUID()
-
-      await db.transaction(async (tx) => {
-        await tx.insert(batchCallsTable).values({
-          id: batchCallId,
-          organizationId,
-          name: payload.name,
-          phoneNumberId: payload.phoneNumberId,
-          agentId: payload.agentId,
-          agentVersionId: payload.agentVersionId ?? null,
-          status: scheduledAt ? "scheduled" : "triggered",
-          scheduledAt,
-          totalCount: payload.recipients.length,
-        })
-
-        await tx.insert(batchCallRecipientsTable).values(
-          payload.recipients.map((recipient) => ({
-            id: crypto.randomUUID(),
-            batchCallId,
-            toNumber: recipient.toNumber,
-            variables: recipient.variables ?? {},
-          }))
-        )
-      })
-
-      await batchCallsQueue.add(
-        "process-batch-call",
-        { batchCallId } satisfies ProcessBatchCallPayload,
-        scheduledAt ? { delay: scheduledAt.getTime() - Date.now() } : undefined
-      )
-
-      return c.json({ id: batchCallId } satisfies CreateBatchCallResponse)
+      return c.json({
+        id: result.batchCallId,
+      } satisfies CreateBatchCallResponse)
     } catch {
       return c.json({ error: t(locale, "batch_calls.create_failed") }, 500)
     }

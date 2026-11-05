@@ -79,7 +79,8 @@
           "billing": "Facturación",
           "members": "Miembros",
           "roles": "Roles",
-          "sso": "Inicio de sesión único"
+          "sso": "Inicio de sesión único",
+          "api_keys": "Claves de API"
         },
         "breadcrumb": "Configuración"
       },
@@ -106,6 +107,10 @@
       },
       "roles": {
         "page_title": "Configuración de roles - Phoneflow"
+      },
+      "api_keys": {
+        "page_title": "Claves de API - Phoneflow",
+        "no_access": "No tienes permiso para ver las claves de API. Pide acceso a un propietario o administrador de la organización."
       }
     },
     "signin": {
@@ -1831,7 +1836,8 @@
             "agent": "Agentes",
             "phone_number": "Números de teléfono",
             "calls": "Llamadas",
-            "billing": "Facturación"
+            "billing": "Facturación",
+            "api_key": "Claves de API"
           },
           "actions": {
             "create": "crear",
@@ -1839,7 +1845,8 @@
             "update": "editar",
             "delete": "eliminar",
             "cancel": "cancelar",
-            "purchase": "comprar"
+            "purchase": "comprar",
+            "revoke": "revocar"
           },
           "toasts": {
             "updated": "{{name}} actualizado",
@@ -1884,6 +1891,60 @@
             "placeholder": "Buscar roles..."
           },
           "create": "Crear rol"
+        }
+      },
+      "api_keys": {
+        "api_keys_table": {
+          "description": "Usa claves de API para llamar a la API de Phoneflow desde tus propios servidores. Cada clave tiene acceso completo a esta organización.",
+          "create": "Crear clave de API",
+          "empty": "Todavía no hay claves de API",
+          "never": "Nunca",
+          "columns": {
+            "name": "Nombre",
+            "status": "Estado",
+            "last_used": "Último uso",
+            "expires": "Caduca"
+          },
+          "status": {
+            "active": "Activa",
+            "expired": "Caducada",
+            "revoked": "Revocada"
+          }
+        },
+        "api_key_row_actions": {
+          "open_actions": "Abrir acciones de {{name}}",
+          "revoke": "Revocar clave",
+          "toasts": {
+            "revoked": "{{name}} revocada"
+          },
+          "revoke_dialog": {
+            "title": "Revocar clave de API",
+            "description": "Las peticiones que usen \"{{name}}\" dejarán de funcionar de inmediato. Esta acción no se puede deshacer.",
+            "confirm": "Revocar"
+          }
+        },
+        "create_api_key_dialog": {
+          "title": "Crear clave de API",
+          "description": "La clave tendrá acceso completo a esta organización, incluida la realización de llamadas.",
+          "submit": "Crear clave",
+          "name": {
+            "label": "Nombre",
+            "placeholder": "Servidor de producción"
+          },
+          "expiry": {
+            "label": "Caducidad",
+            "options": {
+              "never": "Nunca",
+              "30": "En 30 días",
+              "90": "En 90 días",
+              "365": "En 1 año"
+            }
+          },
+          "reveal": {
+            "title": "Copia tu clave de API",
+            "description": "Esta es la única vez que se mostrará la clave. Guárdala en un lugar seguro.",
+            "label": "Clave de API"
+          }
         }
       }
     },

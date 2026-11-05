@@ -190,6 +190,39 @@
           "required_with_username": "La contraseña SIP es obligatoria cuando se indica un usuario"
         }
       }
+    },
+    "api_keys": {
+      "id": {
+        "invalid": "El ID de la clave de API debe ser un UUID válido"
+      },
+      "name": {
+        "required": "El nombre es obligatorio",
+        "max": "El nombre debe tener como máximo 255 caracteres"
+      },
+      "expires_at": {
+        "invalid": "La caducidad debe ser una fecha ISO 8601 válida",
+        "in_past": "La caducidad debe ser futura"
+      }
+    },
+    "v1": {
+      "id": {
+        "invalid": "El ID debe ser un UUID válido"
+      },
+      "page": {
+        "invalid": "page debe ser un entero positivo"
+      },
+      "page_size": {
+        "invalid": "pageSize debe ser un entero entre 1 y 100"
+      },
+      "status": {
+        "invalid": "status debe ser in_progress, completed o no_answer"
+      },
+      "agent_id": {
+        "invalid": "agentId debe ser un UUID válido"
+      },
+      "batch_call_id": {
+        "invalid": "batchCallId debe ser un UUID válido"
+      }
     }
   }
 }

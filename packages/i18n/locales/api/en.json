@@ -30,7 +30,9 @@
     "insufficient_credits": "Insufficient credits",
     "agent_version_not_found": "Agent version not found",
     "scheduled_at_in_past": "Scheduled time must be in the future",
-    "create_failed": "Failed to create batch call"
+    "create_failed": "Failed to create batch call",
+    "not_found": "Batch call not found",
+    "load_failed": "Failed to fetch batch call"
   },
   "billing": {
     "load_failed": "Failed to load billing",
@@ -89,5 +91,16 @@
     "image_type_invalid": "Image must be JPEG, PNG, WebP, or GIF",
     "image_too_large": "Image must be 2MB or smaller",
     "upload_image_failed": "Failed to upload image"
+  },
+  "api_keys": {
+    "verify_failed": "Failed to verify API key",
+    "list_failed": "Failed to load API keys",
+    "create_failed": "Failed to create API key",
+    "revoke_failed": "Failed to revoke API key",
+    "not_found": "API key not found"
+  },
+  "rate_limit": {
+    "exceeded": "Rate limit exceeded",
+    "unavailable": "Service temporarily unavailable, try again shortly"
   }
 }
