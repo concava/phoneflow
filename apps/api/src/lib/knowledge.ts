@@ -37,10 +37,26 @@ export function decodeEmbedding(encoded: string) {
   )
 }
 
+const ENQUEUE_TIMEOUT_MS = 5_000
+
 export async function enqueueKnowledgeDocument(documentId: string) {
-  await knowledgeQueue.add("process-document", {
-    documentId,
-  } satisfies ProcessKnowledgeDocumentPayload)
+  // With maxRetriesPerRequest: null, Redis commands wait forever during an outage,
+  // so without a limit the caller's failure handling would never run. A job that
+  // reaches Redis later is ignored, because the start route skips failed documents.
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error("Timed out waiting for Redis")),
+      ENQUEUE_TIMEOUT_MS
+    )
+  })
+
+  await Promise.race([
+    knowledgeQueue.add("process-document", {
+      documentId,
+    } satisfies ProcessKnowledgeDocumentPayload),
+    timeout,
+  ]).finally(() => clearTimeout(timer))
 }
 
 export async function searchKnowledge({

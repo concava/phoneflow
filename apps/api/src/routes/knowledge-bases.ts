@@ -587,7 +587,22 @@ knowledgeBaseRoutes.post(
             )
       }
 
-      await enqueueKnowledgeDocument(document.id)
+      try {
+        await enqueueKnowledgeDocument(document.id)
+      } catch {
+        await db
+          .update(knowledgeDocumentsTable)
+          .set({
+            status: "failed",
+            error: "processing_failed",
+            updatedAt: new Date(),
+          })
+          .where(eq(knowledgeDocumentsTable.id, document.id))
+        return c.json(
+          { error: t(locale, "knowledge_bases.reprocess_failed") },
+          500
+        )
+      }
 
       return c.json(document satisfies KnowledgeDocumentResponse)
     } catch {
