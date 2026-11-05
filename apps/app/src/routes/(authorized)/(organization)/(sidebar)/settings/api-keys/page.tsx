@@ -1,0 +1,51 @@
+import { createFileRoute } from "@tanstack/react-router"
+import { Suspense } from "react"
+
+import { Skeleton } from "@workspace/ui/components/skeleton"
+import { ApiKeysTable } from "@/components/settings/api-keys/api-keys-table"
+import { useCheckPermission } from "@/lib/auth/permissions"
+import { useTranslation } from "@/lib/i18n"
+
+export const Route = createFileRoute(
+  "/(authorized)/(organization)/(sidebar)/settings/api-keys/"
+)({
+  component: Page,
+})
+
+function ApiKeysSettingsSkeleton() {
+  return (
+    <div>
+      <div className="mb-5 flex items-center justify-end">
+        <Skeleton className="h-9 w-36" />
+      </div>
+      <Skeleton className="h-70 w-full rounded-md" />
+    </div>
+  )
+}
+
+function ApiKeysSettings() {
+  const { t } = useTranslation()
+  const canRead = useCheckPermission({ apiKey: ["read"] })
+
+  if (!canRead) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {t("routes.settings.api_keys.no_access")}
+      </p>
+    )
+  }
+
+  return <ApiKeysTable />
+}
+
+function Page() {
+  const { t } = useTranslation()
+  return (
+    <>
+      <title>{t("routes.settings.api_keys.page_title")}</title>
+      <Suspense fallback={<ApiKeysSettingsSkeleton />}>
+        <ApiKeysSettings />
+      </Suspense>
+    </>
+  )
+}

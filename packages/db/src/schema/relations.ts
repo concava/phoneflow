@@ -1,6 +1,7 @@
 import { defineRelations } from "drizzle-orm"
 
 import { agentsTable, agentVersionsTable } from "@workspace/db/schema/agents"
+import { apiKeysTable } from "@workspace/db/schema/api-keys"
 import {
   account,
   invitation,
@@ -23,6 +24,7 @@ export const relations = defineRelations(
   {
     agentsTable,
     agentVersionsTable,
+    apiKeysTable,
     batchCallsTable,
     batchCallRecipientsTable,
     callsTable,
@@ -76,6 +78,16 @@ export const relations = defineRelations(
       batchCalls: r.many.batchCallsTable({
         from: r.agentVersionsTable.id,
         to: r.batchCallsTable.agentVersionId,
+      }),
+    },
+    apiKeysTable: {
+      organization: r.one.organization({
+        from: r.apiKeysTable.organizationId,
+        to: r.organization.id,
+      }),
+      creator: r.one.user({
+        from: r.apiKeysTable.createdBy,
+        to: r.user.id,
       }),
     },
     batchCallsTable: {
@@ -204,6 +216,10 @@ export const relations = defineRelations(
       agents: r.many.agentsTable({
         from: r.organization.id,
         to: r.agentsTable.organizationId,
+      }),
+      apiKeys: r.many.apiKeysTable({
+        from: r.organization.id,
+        to: r.apiKeysTable.organizationId,
       }),
       phoneNumbers: r.many.phoneNumbersTable({
         from: r.organization.id,

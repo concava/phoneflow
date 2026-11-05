@@ -79,7 +79,8 @@
           "billing": "Billing",
           "members": "Members",
           "roles": "Roles",
-          "sso": "Single sign-on"
+          "sso": "Single sign-on",
+          "api_keys": "API keys"
         },
         "breadcrumb": "Settings"
       },
@@ -106,6 +107,10 @@
       },
       "roles": {
         "page_title": "Roles settings - Phoneflow"
+      },
+      "api_keys": {
+        "page_title": "API keys - Phoneflow",
+        "no_access": "You don't have permission to view API keys. Ask an organization owner or admin for access."
       }
     },
     "signin": {
@@ -1831,7 +1836,8 @@
             "agent": "Agents",
             "phone_number": "Phone numbers",
             "calls": "Calls",
-            "billing": "Billing"
+            "billing": "Billing",
+            "api_key": "API keys"
           },
           "actions": {
             "create": "create",
@@ -1839,7 +1845,8 @@
             "update": "update",
             "delete": "delete",
             "cancel": "cancel",
-            "purchase": "purchase"
+            "purchase": "purchase",
+            "revoke": "revoke"
           },
           "toasts": {
             "updated": "{{name}} updated",
@@ -1884,6 +1891,60 @@
             "placeholder": "Search roles..."
           },
           "create": "Create role"
+        }
+      },
+      "api_keys": {
+        "api_keys_table": {
+          "description": "Use API keys to call the Phoneflow API from your own servers. Each key has full access to this organization.",
+          "create": "Create API key",
+          "empty": "No API keys yet",
+          "never": "Never",
+          "columns": {
+            "name": "Name",
+            "status": "Status",
+            "last_used": "Last used",
+            "expires": "Expires"
+          },
+          "status": {
+            "active": "Active",
+            "expired": "Expired",
+            "revoked": "Revoked"
+          }
+        },
+        "api_key_row_actions": {
+          "open_actions": "Open actions for {{name}}",
+          "revoke": "Revoke key",
+          "toasts": {
+            "revoked": "{{name}} revoked"
+          },
+          "revoke_dialog": {
+            "title": "Revoke API key",
+            "description": "Requests using \"{{name}}\" will stop working immediately. This can't be undone.",
+            "confirm": "Revoke"
+          }
+        },
+        "create_api_key_dialog": {
+          "title": "Create API key",
+          "description": "The key will have full access to this organization, including placing calls.",
+          "submit": "Create key",
+          "name": {
+            "label": "Name",
+            "placeholder": "Production server"
+          },
+          "expiry": {
+            "label": "Expiration",
+            "options": {
+              "never": "Never",
+              "30": "In 30 days",
+              "90": "In 90 days",
+              "365": "In 1 year"
+            }
+          },
+          "reveal": {
+            "title": "Copy your API key",
+            "description": "This is the only time the key will be shown. Store it somewhere safe.",
+            "label": "API key"
+          }
         }
       }
     },

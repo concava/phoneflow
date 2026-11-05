@@ -190,6 +190,39 @@
           "required_with_username": "SIP password is required when a username is set"
         }
       }
+    },
+    "api_keys": {
+      "id": {
+        "invalid": "API key ID must be a valid UUID"
+      },
+      "name": {
+        "required": "Name is required",
+        "max": "Name must be at most 255 characters"
+      },
+      "expires_at": {
+        "invalid": "Expiry must be a valid ISO 8601 date",
+        "in_past": "Expiry must be in the future"
+      }
+    },
+    "v1": {
+      "id": {
+        "invalid": "ID must be a valid UUID"
+      },
+      "page": {
+        "invalid": "page must be a positive integer"
+      },
+      "page_size": {
+        "invalid": "pageSize must be an integer between 1 and 100"
+      },
+      "status": {
+        "invalid": "status must be in_progress, completed or no_answer"
+      },
+      "agent_id": {
+        "invalid": "agentId must be a valid UUID"
+      },
+      "batch_call_id": {
+        "invalid": "batchCallId must be a valid UUID"
+      }
     }
   }
 }

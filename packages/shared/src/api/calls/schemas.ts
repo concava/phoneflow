@@ -20,6 +20,7 @@ export const startInboundCallRequestSchema = z
 
 export const startOutboundCallRequestSchema = z
   .object({
+    callId: z.uuid().optional(),
     agentId: z.uuid(),
     agentVersionId: z.uuid().nullable(),
     fromNumber: z.e164(),
@@ -32,6 +33,7 @@ export const startOutboundCallRequestSchema = z
 
 export const unansweredCallRequestSchema = z
   .object({
+    callId: z.uuid().optional(),
     agentId: z.uuid(),
     agentVersionId: z.uuid().nullable(),
     fromNumber: z.e164(),

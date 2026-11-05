@@ -37,6 +37,7 @@ import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { requireAuthToken } from "@/lib/auth/token"
 import { computeCallCosts } from "@/lib/call-cost"
+import { buildCallListWhere, triggerOutboundCall } from "@/lib/calls"
 import { recordContactCall, resolvePhoneContactId } from "@/lib/contacts"
 import {
   deductOrganizationCredits,
@@ -47,7 +48,6 @@ import { t } from "@/lib/i18n"
 import {
   createAccessToken,
   getRecording,
-  placeOutboundCall,
   removeCallParticipants,
   startCallRecording,
   stopCallRecording,
@@ -324,7 +324,7 @@ callRoutes.post(
       const [call] = await db
         .insert(callsTable)
         .values({
-          id: crypto.randomUUID(),
+          id: payload.callId ?? crypto.randomUUID(),
           organizationId: resolved.organizationId,
           agentId: payload.agentId,
           agentVersionId: resolved.agentVersionId,
@@ -387,7 +387,7 @@ callRoutes.post(
       const [call] = await db
         .insert(callsTable)
         .values({
-          id: crypto.randomUUID(),
+          id: payload.callId ?? crypto.randomUUID(),
           organizationId: resolved.organizationId,
           agentId: payload.agentId,
           agentVersionId: resolved.agentVersionId,
@@ -734,97 +734,7 @@ callRoutes.get(
     const query = c.req.valid("query")
 
     try {
-      const where: NonNullable<
-        Parameters<typeof db.query.callsTable.findMany>[0]
-      >["where"] = {
-        organizationId,
-      }
-
-      if (query.channel) {
-        where.channel = query.channel
-      }
-
-      if (query.direction) {
-        where.direction = query.direction
-      }
-
-      if (query.status) {
-        where.status = query.status
-      }
-
-      if (query.startedAtFrom) {
-        where.startedAt = {
-          ...where.startedAt,
-          gte: new Date(query.startedAtFrom),
-        }
-      }
-
-      if (query.startedAtTo) {
-        where.startedAt = {
-          ...where.startedAt,
-          lte: new Date(query.startedAtTo),
-        }
-      }
-
-      if (query.agentIds) {
-        const agentIds = Array.isArray(query.agentIds)
-          ? query.agentIds
-          : query.agentIds.split(",")
-        where.agentId = { in: agentIds }
-      }
-
-      if (query.fromNumbers) {
-        const fromNumbers = Array.isArray(query.fromNumbers)
-          ? query.fromNumbers
-          : query.fromNumbers.split(",")
-        where.fromNumber = { in: fromNumbers }
-      }
-
-      if (query.toNumbers) {
-        const toNumbers = Array.isArray(query.toNumbers)
-          ? query.toNumbers
-          : query.toNumbers.split(",")
-        where.toNumber = { in: toNumbers }
-      }
-
-      if (query.batchId) {
-        where.batchCallId = query.batchId
-      }
-
-      if (query.cost !== undefined) {
-        const cost = query.cost.toFixed(6)
-
-        if (query.costOp === "between" && query.costMax !== undefined) {
-          where.totalCost = {
-            gte: Math.min(query.cost, query.costMax).toFixed(6),
-            lte: Math.max(query.cost, query.costMax).toFixed(6),
-          }
-        } else if (query.costOp === "lte") {
-          where.totalCost = { lte: cost }
-        } else if (query.costOp === "eq") {
-          where.totalCost = { eq: cost }
-        } else {
-          where.totalCost = { gte: cost }
-        }
-      }
-
-      if (query.duration !== undefined) {
-        const durationMs = Math.round(query.duration * 1000)
-
-        if (query.durationOp === "between" && query.durationMax !== undefined) {
-          const maxDurationMs = Math.round(query.durationMax * 1000)
-          where.durationMs = {
-            gte: Math.min(durationMs, maxDurationMs),
-            lte: Math.max(durationMs, maxDurationMs),
-          }
-        } else if (query.durationOp === "lte") {
-          where.durationMs = { lte: durationMs }
-        } else if (query.durationOp === "eq") {
-          where.durationMs = { eq: durationMs }
-        } else {
-          where.durationMs = { gte: durationMs }
-        }
-      }
+      const where = buildCallListWhere(organizationId, query)
 
       const [{ total }] = await db
         .select({ total: count() })
@@ -881,82 +791,11 @@ callRoutes.post(
     const payload = c.req.valid("json")
 
     try {
-      const phoneNumber = await db.query.phoneNumbersTable.findFirst({
-        where: {
-          id: payload.phoneNumberId,
-          organizationId,
-        },
-        columns: {
-          number: true,
-          sipAddress: true,
-          sipUsername: true,
-          sipPassword: true,
-        },
-      })
+      const result = await triggerOutboundCall(organizationId, payload)
 
-      if (!phoneNumber) {
-        return c.json({ error: t(locale, "calls.phone_number_not_found") }, 404)
+      if (!result.ok) {
+        return c.json({ error: t(locale, result.error) }, result.status)
       }
-
-      if (
-        !phoneNumber.sipAddress ||
-        !phoneNumber.sipUsername ||
-        !phoneNumber.sipPassword
-      ) {
-        return c.json(
-          { error: t(locale, "calls.phone_number_without_sip") },
-          400
-        )
-      }
-
-      const agent = await db.query.agentsTable.findFirst({
-        where: {
-          id: payload.agentId,
-          organizationId,
-        },
-        columns: {
-          id: true,
-        },
-      })
-
-      if (!agent) {
-        return c.json({ error: t(locale, "calls.agent_not_found") }, 404)
-      }
-
-      if (env.IS_CLOUD && !(await organizationHasCredits(organizationId))) {
-        return c.json({ error: t(locale, "calls.insufficient_credits") }, 402)
-      }
-
-      if (payload.agentVersionId) {
-        const version = await db.query.agentVersionsTable.findFirst({
-          where: {
-            id: payload.agentVersionId,
-            agentId: payload.agentId,
-          },
-          columns: {
-            id: true,
-          },
-        })
-
-        if (!version) {
-          return c.json(
-            { error: t(locale, "calls.agent_version_not_found") },
-            404
-          )
-        }
-      }
-
-      await placeOutboundCall({
-        agentId: payload.agentId,
-        agentVersionId: payload.agentVersionId ?? null,
-        toNumber: payload.toNumber,
-        fromNumber: phoneNumber.number,
-        sipAddress: phoneNumber.sipAddress,
-        sipUsername: phoneNumber.sipUsername,
-        sipPassword: phoneNumber.sipPassword,
-        variables: payload.variables ?? {},
-        batchCallId: null,
-      })
 
       return c.json({ ok: true } satisfies TriggerOutboundCallResponse)
     } catch {

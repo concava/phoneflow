@@ -30,7 +30,9 @@
     "insufficient_credits": "Créditos insuficientes",
     "agent_version_not_found": "Versión del agente no encontrada",
     "scheduled_at_in_past": "La hora programada debe ser futura",
-    "create_failed": "No se pudo crear la llamada por lotes"
+    "create_failed": "No se pudo crear la llamada por lotes",
+    "not_found": "Llamada por lotes no encontrada",
+    "load_failed": "No se pudo cargar la llamada por lotes"
   },
   "billing": {
     "load_failed": "No se pudo cargar la facturación",
@@ -89,5 +91,16 @@
     "image_type_invalid": "La imagen debe ser JPEG, PNG, WebP o GIF",
     "image_too_large": "La imagen debe ocupar 2MB o menos",
     "upload_image_failed": "No se pudo subir la imagen"
+  },
+  "api_keys": {
+    "verify_failed": "No se pudo verificar la clave de API",
+    "list_failed": "No se pudieron cargar las claves de API",
+    "create_failed": "No se pudo crear la clave de API",
+    "revoke_failed": "No se pudo revocar la clave de API",
+    "not_found": "Clave de API no encontrada"
+  },
+  "rate_limit": {
+    "exceeded": "Has superado el límite de peticiones",
+    "unavailable": "Servicio no disponible temporalmente, inténtalo de nuevo en unos instantes"
   }
 }
