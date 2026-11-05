@@ -15,3 +15,14 @@ export const batchCallsQueue = new Queue("batch-calls", {
   connection,
   telemetry,
 })
+
+export const evaluationsQueue = new Queue("evaluations", {
+  connection,
+  telemetry,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 5000 },
+    removeOnComplete: 1000,
+    removeOnFail: 1000,
+  },
+})

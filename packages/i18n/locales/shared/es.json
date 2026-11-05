@@ -190,6 +190,41 @@
           "required_with_username": "La contraseña SIP es obligatoria cuando se indica un usuario"
         }
       }
+    },
+    "evaluations": {
+      "suite_name": {
+        "required": "El nombre de la suite es obligatorio",
+        "max": "El nombre de la suite no puede superar los 255 caracteres"
+      },
+      "agent": {
+        "required": "Selecciona un agente"
+      },
+      "criteria": {
+        "required": "Añade al menos un criterio",
+        "max": "Una suite puede tener como máximo 20 criterios",
+        "duplicate": "Los criterios no pueden repetirse"
+      },
+      "criterion_name": {
+        "required": "El nombre del criterio es obligatorio",
+        "max": "El nombre del criterio no puede superar los 120 caracteres"
+      },
+      "criterion_description": {
+        "required": "La descripción del criterio es obligatoria",
+        "max": "La descripción del criterio no puede superar los 2000 caracteres"
+      },
+      "limit": {
+        "range": "Introduce un número de llamadas entre 1 y 200"
+      },
+      "date_range": {
+        "invalid": "La fecha de inicio debe ser anterior a la de fin",
+        "invalid_date": "Introduce una fecha válida"
+      },
+      "agent_version": {
+        "invalid": "Selecciona una versión válida del agente"
+      },
+      "result_ids": {
+        "invalid": "Selecciona entre 1 y 200 resultados válidos"
+      }
     }
   }
 }

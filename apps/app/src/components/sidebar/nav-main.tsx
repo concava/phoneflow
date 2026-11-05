@@ -1,5 +1,6 @@
 import { Link, useMatchRoute } from "@tanstack/react-router"
 import {
+  ClipboardCheckIcon,
   HistoryIcon,
   PhoneIcon,
   PhoneOutgoingIcon,
@@ -56,6 +57,11 @@ const nav = {
           title: "components.sidebar.nav_main.items.contacts",
           url: "/contacts",
           icon: <UsersIcon />,
+        },
+        {
+          title: "components.sidebar.nav_main.items.evaluations",
+          url: "/evaluations",
+          icon: <ClipboardCheckIcon />,
         },
       ],
     },

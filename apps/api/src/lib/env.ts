@@ -29,4 +29,7 @@ export const env = {
   PUBLIC_S3_URL: process.env.PUBLIC_S3_URL ?? "",
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? "",
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  POST_CALL_LLM_BASE_URL: process.env.POST_CALL_LLM_BASE_URL ?? "",
+  POST_CALL_LLM_API_KEY: process.env.POST_CALL_LLM_API_KEY ?? "",
+  POST_CALL_LLM_MODEL: process.env.POST_CALL_LLM_MODEL ?? "",
 }

@@ -17,6 +17,11 @@ import {
 import { callsTable } from "@workspace/db/schema/calls"
 import { contactsTable } from "@workspace/db/schema/contacts"
 import { creditPurchasesTable } from "@workspace/db/schema/credits"
+import {
+  evaluationResultsTable,
+  evaluationRunsTable,
+  evaluationSuitesTable,
+} from "@workspace/db/schema/evaluations"
 import { phoneNumbersTable } from "@workspace/db/schema/phone-numbers"
 
 export const relations = defineRelations(
@@ -28,6 +33,9 @@ export const relations = defineRelations(
     callsTable,
     contactsTable,
     creditPurchasesTable,
+    evaluationResultsTable,
+    evaluationRunsTable,
+    evaluationSuitesTable,
     phoneNumbersTable,
     user,
     session,
@@ -104,6 +112,48 @@ export const relations = defineRelations(
       batchCall: r.one.batchCallsTable({
         from: r.batchCallRecipientsTable.batchCallId,
         to: r.batchCallsTable.id,
+      }),
+    },
+    evaluationSuitesTable: {
+      organization: r.one.organization({
+        from: r.evaluationSuitesTable.organizationId,
+        to: r.organization.id,
+      }),
+      agent: r.one.agentsTable({
+        from: r.evaluationSuitesTable.agentId,
+        to: r.agentsTable.id,
+      }),
+      runs: r.many.evaluationRunsTable({
+        from: r.evaluationSuitesTable.id,
+        to: r.evaluationRunsTable.suiteId,
+      }),
+    },
+    evaluationRunsTable: {
+      organization: r.one.organization({
+        from: r.evaluationRunsTable.organizationId,
+        to: r.organization.id,
+      }),
+      suite: r.one.evaluationSuitesTable({
+        from: r.evaluationRunsTable.suiteId,
+        to: r.evaluationSuitesTable.id,
+      }),
+      agentVersion: r.one.agentVersionsTable({
+        from: r.evaluationRunsTable.agentVersionId,
+        to: r.agentVersionsTable.id,
+      }),
+      results: r.many.evaluationResultsTable({
+        from: r.evaluationRunsTable.id,
+        to: r.evaluationResultsTable.runId,
+      }),
+    },
+    evaluationResultsTable: {
+      run: r.one.evaluationRunsTable({
+        from: r.evaluationResultsTable.runId,
+        to: r.evaluationRunsTable.id,
+      }),
+      call: r.one.callsTable({
+        from: r.evaluationResultsTable.callId,
+        to: r.callsTable.id,
       }),
     },
     callsTable: {
@@ -224,6 +274,10 @@ export const relations = defineRelations(
       creditPurchases: r.many.creditPurchasesTable({
         from: r.organization.id,
         to: r.creditPurchasesTable.organizationId,
+      }),
+      evaluationSuites: r.many.evaluationSuitesTable({
+        from: r.organization.id,
+        to: r.evaluationSuitesTable.organizationId,
       }),
     },
     creditPurchasesTable: {

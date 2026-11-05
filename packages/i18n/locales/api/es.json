@@ -32,6 +32,27 @@
     "scheduled_at_in_past": "La hora programada debe ser futura",
     "create_failed": "No se pudo crear la llamada por lotes"
   },
+  "evaluations": {
+    "list_failed": "No se han podido cargar las suites de evaluación",
+    "load_failed": "No se ha podido cargar la suite de evaluación",
+    "create_failed": "No se ha podido crear la suite de evaluación",
+    "update_failed": "No se ha podido actualizar la suite de evaluación",
+    "delete_failed": "No se ha podido eliminar la suite de evaluación",
+    "suite_not_found": "Suite de evaluación no encontrada",
+    "agent_not_found": "Agente no encontrado",
+    "agent_version_not_found": "Versión del agente no encontrada",
+    "llm_not_configured": "Las evaluaciones no están configuradas en este servidor. Define POST_CALL_LLM_BASE_URL, POST_CALL_LLM_API_KEY y POST_CALL_LLM_MODEL.",
+    "no_matching_calls": "Ninguna llamada completada con transcripción coincide con estos filtros",
+    "start_run_failed": "No se ha podido iniciar la ejecución de la evaluación",
+    "list_runs_failed": "No se han podido cargar las ejecuciones de la evaluación",
+    "load_run_failed": "No se ha podido cargar la ejecución de la evaluación",
+    "run_not_found": "Ejecución de la evaluación no encontrada",
+    "list_results_failed": "No se han podido cargar los resultados de la evaluación",
+    "run_not_active": "Esta ejecución ya no está activa",
+    "cancel_failed": "No se ha podido cancelar la ejecución de la evaluación",
+    "nothing_to_rejudge": "No hay resultados que volver a juzgar",
+    "rejudge_failed": "No se han podido volver a juzgar los resultados"
+  },
   "billing": {
     "load_failed": "No se pudo cargar la facturación",
     "list_invoices_failed": "No se pudieron cargar las facturas",
