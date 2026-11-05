@@ -118,14 +118,17 @@ export function AnalyticsFilters({
         label={t("components.analytics.filters.range.label")}
         value={isCustomRange ? "custom" : (filters.range ?? "30d")}
         options={rangeOptions}
-        onChange={(value) =>
+        onChange={(value) => {
+          // "custom" only labels a range picked in the calendar; it is not a preset.
+          if (value === "custom") return
+
           onFiltersChange({
             ...filters,
             range: value as AnalyticsRangePreset,
             from: undefined,
             to: undefined,
           })
-        }
+        }}
       />
       <DateRangeFilter
         id="analytics-date-range"
