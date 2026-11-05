@@ -8,6 +8,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { env } from "@/lib/env"
 import { useTranslation } from "@/lib/i18n"
+import { isRecordingMissing } from "@/lib/recording"
 
 const PLAYBACK_RATES = [0.5, 1, 1.5, 2]
 const SPLIT_CHANNELS = [
@@ -21,12 +22,6 @@ function formatTick(seconds: number) {
   const secs = String(Math.floor(cs / 100) % 60).padStart(2, "0")
   const fraction = String(cs % 100).padStart(2, "0")
   return `${minutes}:${secs}.${fraction}`
-}
-
-// wavesurfer only exposes the HTTP status in its error message. If that wording
-// ever changes, a missing recording shows the load error instead of hiding.
-function isRecordingMissing(error: Error) {
-  return error.message.includes(": 404 ")
 }
 
 export function CallRecordingPlayer({
@@ -43,10 +38,11 @@ export function CallRecordingPlayer({
   const fetchParams = useRef({ credentials: "include" as const }).current
   const [playbackRate, setPlaybackRate] = useState(1)
   const [loadError, setLoadError] = useState<"missing" | "failed" | null>(null)
+  const url = `${env.API_URL}/api/calls/${callId}/recording`
 
   const { wavesurfer, isReady, isPlaying } = useWavesurfer({
     container: containerRef,
-    url: `${env.API_URL}/api/calls/${callId}/recording`,
+    url,
     fetchParams,
     height: 48,
     minPxPerSec: 50,
@@ -60,10 +56,17 @@ export function CallRecordingPlayer({
 
   useEffect(() => {
     if (!wavesurfer || isReady) return
-    return wavesurfer.on("error", (error) => {
-      setLoadError(isRecordingMissing(error) ? "missing" : "failed")
+    let active = true
+    const unsubscribe = wavesurfer.on("error", () => {
+      void isRecordingMissing(url).then((missing) => {
+        if (active) setLoadError(missing ? "missing" : "failed")
+      })
     })
-  }, [wavesurfer, isReady])
+    return () => {
+      active = false
+      unsubscribe()
+    }
+  }, [wavesurfer, isReady, url])
 
   useEffect(() => {
     if (!wavesurfer || !isReady || position == null) return
