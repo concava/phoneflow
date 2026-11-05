@@ -700,6 +700,15 @@
                 "low": "Low"
               }
             },
+            "pronunciations": {
+              "label": "Pronunciation",
+              "description": "Write each word the way it should sound, for example \"Xiaomi\" as \"Shaomi\". Only the voice changes: the transcript keeps the original word",
+              "term_placeholder": "Word or name",
+              "replacement_placeholder": "Say it as",
+              "case_sensitive": "Match case",
+              "remove": "Remove word",
+              "add": "Add word"
+            },
             "interruptions": {
               "label": "Interruptions",
               "description": "Stop the agent when the user starts speaking"
