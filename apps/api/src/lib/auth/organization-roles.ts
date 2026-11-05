@@ -12,6 +12,7 @@ const defaultRoles = {
       phoneNumber: ["create", "update", "delete"],
       calls: ["create"],
       billing: ["purchase"],
+      webhook: ["create", "read", "update", "delete"],
     },
   },
   member: {

@@ -18,6 +18,10 @@ import { callsTable } from "@workspace/db/schema/calls"
 import { contactsTable } from "@workspace/db/schema/contacts"
 import { creditPurchasesTable } from "@workspace/db/schema/credits"
 import { phoneNumbersTable } from "@workspace/db/schema/phone-numbers"
+import {
+  webhookDeliveriesTable,
+  webhookEndpointsTable,
+} from "@workspace/db/schema/webhooks"
 
 export const relations = defineRelations(
   {
@@ -29,6 +33,8 @@ export const relations = defineRelations(
     contactsTable,
     creditPurchasesTable,
     phoneNumbersTable,
+    webhookDeliveriesTable,
+    webhookEndpointsTable,
     user,
     session,
     account,
@@ -156,6 +162,26 @@ export const relations = defineRelations(
         to: r.batchCallsTable.phoneNumberId,
       }),
     },
+    webhookEndpointsTable: {
+      organization: r.one.organization({
+        from: r.webhookEndpointsTable.organizationId,
+        to: r.organization.id,
+      }),
+      deliveries: r.many.webhookDeliveriesTable({
+        from: r.webhookEndpointsTable.id,
+        to: r.webhookDeliveriesTable.endpointId,
+      }),
+    },
+    webhookDeliveriesTable: {
+      organization: r.one.organization({
+        from: r.webhookDeliveriesTable.organizationId,
+        to: r.organization.id,
+      }),
+      endpoint: r.one.webhookEndpointsTable({
+        from: r.webhookDeliveriesTable.endpointId,
+        to: r.webhookEndpointsTable.id,
+      }),
+    },
     user: {
       sessions: r.many.session({
         from: r.user.id,
@@ -224,6 +250,14 @@ export const relations = defineRelations(
       creditPurchases: r.many.creditPurchasesTable({
         from: r.organization.id,
         to: r.creditPurchasesTable.organizationId,
+      }),
+      webhookEndpoints: r.many.webhookEndpointsTable({
+        from: r.organization.id,
+        to: r.webhookEndpointsTable.organizationId,
+      }),
+      webhookDeliveries: r.many.webhookDeliveriesTable({
+        from: r.organization.id,
+        to: r.webhookDeliveriesTable.organizationId,
       }),
     },
     creditPurchasesTable: {

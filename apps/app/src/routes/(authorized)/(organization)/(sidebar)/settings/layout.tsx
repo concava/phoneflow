@@ -59,6 +59,10 @@ const settingsNavItems = [
     title: "routes.settings.layout.nav.sso",
     to: "/settings/sso",
   },
+  {
+    title: "routes.settings.layout.nav.webhooks",
+    to: "/settings/webhooks",
+  },
 ]
 
 function SettingsContentSkeleton() {

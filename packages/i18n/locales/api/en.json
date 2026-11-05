@@ -89,5 +89,20 @@
     "image_type_invalid": "Image must be JPEG, PNG, WebP, or GIF",
     "image_too_large": "Image must be 2MB or smaller",
     "upload_image_failed": "Failed to upload image"
+  },
+  "webhooks": {
+    "list_failed": "Failed to load webhooks",
+    "load_failed": "Failed to load webhook",
+    "create_failed": "Failed to create webhook",
+    "update_failed": "Failed to update webhook",
+    "delete_failed": "Failed to delete webhook",
+    "rotate_failed": "Failed to rotate webhook secret",
+    "test_failed": "Failed to send test event",
+    "deliveries_failed": "Failed to load webhook deliveries",
+    "retry_failed": "Failed to retry webhook delivery",
+    "not_found": "Webhook not found",
+    "delivery_not_found": "Webhook delivery not found",
+    "delivery_not_failed": "Only failed deliveries can be retried",
+    "https_required": "Webhook URLs must use https"
   }
 }

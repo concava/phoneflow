@@ -79,7 +79,8 @@
           "billing": "Facturación",
           "members": "Miembros",
           "roles": "Roles",
-          "sso": "Inicio de sesión único"
+          "sso": "Inicio de sesión único",
+          "webhooks": "Webhooks"
         },
         "breadcrumb": "Configuración"
       },
@@ -106,6 +107,9 @@
       },
       "roles": {
         "page_title": "Configuración de roles - Phoneflow"
+      },
+      "webhooks": {
+        "page_title": "Ajustes de webhooks - Phoneflow"
       }
     },
     "signin": {
@@ -1831,7 +1835,8 @@
             "agent": "Agentes",
             "phone_number": "Números de teléfono",
             "calls": "Llamadas",
-            "billing": "Facturación"
+            "billing": "Facturación",
+            "webhook": "Webhooks"
           },
           "actions": {
             "create": "crear",
@@ -1884,6 +1889,92 @@
             "placeholder": "Buscar roles..."
           },
           "create": "Crear rol"
+        }
+      },
+      "webhooks": {
+        "no_permission": "No tienes permiso para ver los webhooks. Pide acceso a un administrador de la organización.",
+        "events": {
+          "call_started": "Llamada iniciada",
+          "call_completed": "Llamada completada",
+          "call_no_answer": "Llamada sin respuesta",
+          "webhook_test": "Evento de prueba"
+        },
+        "table": {
+          "description": "Envía eventos de llamada firmados a tus propios sistemas.",
+          "create": "Añadir webhook",
+          "empty": "Aún no hay webhooks",
+          "toggle_enabled": "Activar o desactivar {{url}}",
+          "columns": {
+            "url": "URL",
+            "events": "Eventos",
+            "secret": "Secreto de firma",
+            "enabled": "Activado"
+          }
+        },
+        "form": {
+          "create_title": "Añadir webhook",
+          "edit_title": "Editar webhook",
+          "description": "Phoneflow envía una petición POST firmada a esta URL cuando ocurre un evento seleccionado. Los datos incluyen transcripciones de llamadas y números de teléfono.",
+          "url": {
+            "label": "URL del endpoint"
+          },
+          "events": {
+            "label": "Eventos",
+            "description": "Elige qué eventos recibe este endpoint."
+          }
+        },
+        "secret": {
+          "title": "Secreto de firma",
+          "description": "Copia este secreto y guárdalo en un lugar seguro. No podrás volver a verlo.",
+          "done": "Hecho"
+        },
+        "actions": {
+          "open_actions": "Abrir acciones de {{url}}",
+          "send_test": "Enviar evento de prueba",
+          "view_deliveries": "Ver envíos",
+          "rotate_secret": "Rotar secreto",
+          "toasts": {
+            "test_sent": "Evento de prueba enviado",
+            "deleted": "Webhook eliminado"
+          },
+          "rotate_dialog": {
+            "title": "¿Rotar el secreto de firma?",
+            "description": "El secreto actual deja de funcionar de inmediato, también para los envíos que se estén reintentando. Actualiza tu receptor enseguida.",
+            "confirm": "Rotar secreto"
+          },
+          "delete_dialog": {
+            "title": "¿Eliminar el webhook?",
+            "description": "{{url}} dejará de recibir eventos y se eliminará su historial de envíos. Esta acción no se puede deshacer."
+          }
+        },
+        "deliveries": {
+          "title": "Envíos",
+          "empty": "Aún no hay envíos",
+          "previous": "Página anterior",
+          "next": "Página siguiente",
+          "columns": {
+            "event": "Evento",
+            "status": "Estado",
+            "result": "Resultado",
+            "attempts": "Intentos",
+            "created": "Creado"
+          },
+          "status": {
+            "pending": "Pendiente",
+            "succeeded": "Correcto",
+            "failed": "Fallido"
+          },
+          "errors": {
+            "blocked_address": "Bloqueado: la dirección de destino no está permitida",
+            "endpoint_disabled": "No enviado: el endpoint está desactivado",
+            "http_status": "El endpoint respondió con HTTP {{statusCode}}",
+            "https_required": "Bloqueado: la URL debe usar https",
+            "invalid_url": "La URL no es válida",
+            "network_error": "No se pudo conectar con el endpoint",
+            "queue_unavailable": "No se pudo poner el envío en cola",
+            "redirect_not_followed": "Redirección no seguida (HTTP {{statusCode}})",
+            "timeout": "El endpoint no respondió en 10 segundos"
+          }
         }
       }
     },
