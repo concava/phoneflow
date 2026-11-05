@@ -15,6 +15,25 @@ function requiredString(message: string) {
   return z.string().trim().min(1, message)
 }
 
+// Matches what the voice agent accepts at call time, so a URL that would never
+// run is refused when it is saved. The URL parser has already normalized IPv4
+// forms such as decimal or hex to dotted notation.
+function isPublicHttpsUrl(value: string) {
+  if (!/^https:\/\//i.test(value) || !URL.canParse(value)) {
+    return false
+  }
+
+  const hostname = new URL(value).hostname.replace(/\.+$/, "").toLowerCase()
+
+  return (
+    hostname !== "" &&
+    hostname !== "localhost" &&
+    !hostname.endsWith(".localhost") &&
+    !hostname.startsWith("[") &&
+    !/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)
+  )
+}
+
 export const sttConfigSchema = z
   .object({
     model: requiredString("schemas.agent_config.stt_config.model.required"),
@@ -270,6 +289,27 @@ const toolKeyValueSchema = z
   })
   .strict()
 
+const preCallWebhookTimeoutMessage =
+  "schemas.agent_config.pre_call_webhook.timeout_ms.range"
+
+export const preCallWebhookSchema = z
+  .object({
+    url: z
+      .string()
+      .trim()
+      .refine(
+        isPublicHttpsUrl,
+        "schemas.agent_config.pre_call_webhook.url.invalid"
+      ),
+    headers: z.array(toolKeyValueSchema),
+    timeoutMs: z
+      .number(preCallWebhookTimeoutMessage)
+      .int(preCallWebhookTimeoutMessage)
+      .min(500, preCallWebhookTimeoutMessage)
+      .max(3000, preCallWebhookTimeoutMessage),
+  })
+  .strict()
+
 const responseVariableSchema = z
   .object({
     name: requiredString("schemas.agent_config.response_variable.name.required")
@@ -438,6 +478,7 @@ export const agentConfigSchema = z
     tts: ttsConfigSchema,
     turnHandling: turnHandlingConfigSchema,
     backgroundAudio: backgroundAudioSchema.exactOptional(),
+    preCallWebhook: preCallWebhookSchema.exactOptional(),
     call: callSettingsSchema,
     globalPrompt: z.string(),
     timezone: z.string(),

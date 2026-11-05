@@ -57,6 +57,8 @@ export type CallSipConnection = {
 
 export type StartCallResponse = {
   callId: string
+  agentId: string
+  agentVersionId: string | null
   config: AgentConfig
   sip: CallSipConnection | null
 }

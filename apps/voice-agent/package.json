@@ -35,6 +35,7 @@
     "@workspace/shared": "workspace:*",
     "dotenv": "catalog:",
     "livekit-server-sdk": "catalog:",
+    "undici": "^7.29.0",
     "zod": "catalog:"
   },
   "devDependencies": {

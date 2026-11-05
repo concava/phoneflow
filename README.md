@@ -9,6 +9,7 @@ Build voice agents by connecting nodes, deploy them to handle inbound and outbou
 - **Visual flow builder**: Build agents as a graph of nodes and edges by connecting them on a canvas. The conversation starts at the start node and branches through different paths based on transition conditions. Each node carries a prompt, each edge defines a condition that moves the conversation forward when met.
 - **Provider, model and voice selection**: Mix and match STT, LLM and TTS providers, models and voices, with the price per minute shown for each option.
 - **Dynamic variables**: A lightweight templating engine lets you parameterize prompts and fill in values at runtime.
+- **Pre-call webhook**: Load caller data from your own server before an inbound call starts, so the agent can greet known customers by name. If your server is slow or fails, the call continues with default values.
 - **In-editor testing**: Test your agents as you iterate right from the editor side panel.
 - **Version control**: Publish immutable agent versions so you can iterate with confidence, switch between versions, and roll back at any time.
 - **Phone numbers**: Import numbers from any provider (Twilio, Telnyx, Zadarma, …) by filling in the number and its SIP credentials.
